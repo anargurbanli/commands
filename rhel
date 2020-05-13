@@ -27,7 +27,20 @@ fi
 #########################################################################################################################################
 ---other---
 # systemctl enable firewalld - Enable firewall
+# firewall-cmd --query-panic
+# firewall-cmd --panic-on
+# firewall-cmd --panic-off
+# firewall-cmd --permanent --zone=public --add-rich-rule='
+  rule family="ipv4"
+  source address="1.2.3.4/32"
+  port protocol="tcp" port="4567" accept'
+# firewall-cmd --reload
 # systemctl start firewalld - Start firewall
+# yum install cifs-utils
+# mount -t cifs -o vers=1.0,username=user_name //server_name/share_name /mnt/
+# firewall-cmd --get-zone-of-interface eth0 - Get zone of interface
+# firewall-cmd --zone=public --list-interfaces - Get interfaces of zone
+# firewall-cmd --zone=internal --change-interface=eth0 - Chante zone for interface
 # systemctl status firewalld - Check status firewall
 # firewall-cmd --list-all - List all configuration
 # firelwall-cmd --get-zones - Get firewall zones
@@ -56,12 +69,124 @@ fi
 # lvextend -L +110M /dev/vg2/lv2 - add capacity to logical volume
 # lvreduce -L -100M /dev/vg2/lv1 - remove capasity from logical volume
 # resize2fs /dev/vg2/lv2 - resize logical volume
+# semanage port -l - show ports restricted by selinux
+# brctl show - show the virtual interface bridges
+# virsh list --all - show all virtual machines
+# nmcli dev show - show network devices status
 # xfs_growfs - change logical volume size after extending
 # vgcreate testvg /dev/sdb - create new logical volume with name "testvg" on physical device /dev/sdb
 #service sssd stop ; rm -rf /var/log/sssd/ ; rm -rf /var/lib/sss/db/ ; rm -rf /var/lib/sss/mc/* ; service sssd start
 # pvcreate /dev/sbd - create new phisical volume on device /dev/sdb
+# groups - show groups of user
+# newgrp sales - set sales as the primary group
+# ss -lt - show listening ports as netstat
+# hostnamectl set-hostname myhost - set hostname
+# setfacl -Rm u:magi:rwx /etc/apache2/sites-available/ - setfacl for user to directory
+# systemctl status crond -l - list current status of crond
+# journalctl -p err - show journalled error
+# journalctl --since yesterday -p err - show journalled error logs from yesterday
+# hwclock --systohc - synchronizes current system time to hardware clock
+# hwclock --hctosys - synchronize current hardware time to the system clock
+# ln -sf /usr/share/zoneinfo/America/Los_Angeles /etc/localtime - set the local time as America/Los_Angeles
+# tzselect - tool for set time zone
+# crontab -e -u natasha - set crontab for specific user
+# /etc/locale.conf - set system language config file
+# bashrc - start every time when user start session
+# bash_profile - start when new login created
+# openvt -c 4 cmd - open new virtual terminal with number 4
+# ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa-key.pub - check fingerprint of ssh-key
+# ssh-keygen -R hostname - revoke host from known hosts
+# sosreport - create report files for redhat support
+# cat /dev/sda > /tmp/device.iso - create iso backup of device
+# getent passwd ldapuser1 - check ldap password for user ldapuser1
+# chown --reference /dir1 /dir2 - copy permission facilities of dir1 to dir2
+# getfacl - check permission facilities of file or directory
+# mail -s "$1 has just logged in" root < ." - send mail from script to spesified user
+# context -Z - check selinux permissions
+# restorecon -FRvv - restore context for file
+# semanage fcontext - search context for specific
+# semanage fcontext -l - show list contexts selinux
+# iptraf - network traffic analizyng tool
+# yum history- show installed packages byy date
+# yum history undo 7 - roleback(delete) packages installed on history with number 7
+# yum gorups list hidden - show all groups of packages
+# reposync - get packages updates from rhel
+# yum group info "Groupname" - show packages in group
+# rpm -qc httpd - show httpd package configuration files
+# systemctl snapshot snapshotname - create snapshoot
+# nmcli connection add type bond ifname bond0 con-name bond0 mode active-backup miimon 100 ip4 192.168.1.10/24 gw4 192.168.1.1
+# nmcli connection add type bond-slave ifname eno1 con-name eno1-slave master bond0
+# nmcli connection add type bond-slave ifname eno2 con-name eno2-slave master bond0
+# nmcli connection up bond00
+# systemctl snapshot - list snapshots
+# systemctl isolate snapshoot - get back snapshoot
+# lvcreate -L 1G -s -n lvdb-snap /dev/centos/lvdata - create snapshoot of logical volume lvdata with new name lvdb-snap
+# .....tty0 systemd.unit=rescue - activate rescue mode
+# journalctl -p string - find in journalctl by string
+# tzselect - select timezone
+# chronyc sources -v - check ntp syncronization
+# vgchange -a n - deactivate logical volumes in volume group
+# lvdisplay --maps - show logical volumes device
+# vgdisplay --maps - show volume groups devices
+# lvresize -r -L +100M /dev/vg/lv - resize logical volum with resizing filesistem
+# rsync -rvz -e ssh  --size-only --include='Logon.*' --include='Logoff.*' --include='*.-' --exclude="*" /cma/rtsx/pie/log/ rts@192.168.36.2:/home/rts/azips - rsync by size only
+# lvcreate --size 100M --snapshot --name snap /dev/vg00/lvol1 - create backup of logical volume /dev/vg00/lvol1 with backup name snap
+# sudo dd if=/dev/sda of=/dev/sdb1 bs=64K conv=noerror,sync status=progress - image backup of disk /dev/sda to disk /dev/sdb
+# sudo dd if=/dev/sda conv=sync,noerror bs=64K | gzip -c  > /PATH/TO/DRIVE/backup_image.img.gz - create image backup of disk /dev/sda to img format in external disc
+# gunzip -c /PATH/TO/DRIVE/backup_image.img.gz | dd of=/dev/sda - restore backup from external device
+#  mount -t cifs -o username=vnc //192.168.148.2/soft /mnt - mount samba sharing
+# /opt/nfs 10.1.1.18(no_root_squash,rw,sync) - nfs export
+----- Team Connection Create and configure(Teaming) ---
+#nmcli con add type team con-name team0 config '{ "runner": {"team0":"activebackup"}}' - create team connection with mode activebackup with name team0
+#nmcli con show - show connections
+#nmcli con mod team0 ipv4.addresses 192.168.148.2/24 ipv4.gateway 192.168.148.1 - team add network
+#nmcli con add type team-slave ifname eno16777736 master team0 - add interface to team
+#nmcli con add type team-slave ifname eno33554960 master team0 - add interface to team
+#nmcli con up team0 - get up team connection
+# pcs resource show - pacemaker show configured resources
+# pcs rsource show --full - pacemaker show all cluster rosorces with parameters
+# pcs resource move rtgs_service rtgsapp02.rtgs.local - relocate pacemaker resource to another node
+# pcs resource unmanage resource1 - unmanage resource group
+# pcs resource manage resource1 -  manage resource group
+# pcs resource cleanup - clean errors
+# ssh -k -l "administrator@rtpswin.local" rtpsipap02.rtps.local -p 53810 - login as other domain user
+# pcs resource relocate 
+# pcs cluster standby
+# authonfig --passalgo sha256 - change user authentication password algoritm. may be used sha-512,md5
+# pcs cluster unstandby
+# pcs cluster start --all
+# pcs stonith refresh - refresh stonith
+# pcs cluster status - show peacemaker cluster nodes status
+# pcs resource disable rtsx - disable cluster resource
+# pcs resource disable rtsx - enable cluster resource
+# pcs cluster stop
+# pcs resource group list - lists all currently configured resource groups
+# pcs resource show rtsx - displays all parameters of cluster resource rtsx
+# pcs resource failcount show - displays fail count of a cluster resource
+# pcs resource update rtsx op stop interval=0s timeout=800s - resource timeout config
+# pcs resource failcount reset {resource_name} {cluster_node_name} - clear or reset the failcount of a cluster resource
+# pcs resource create ha_lvm LVM volumegroup=cluster_vg exclusive=true --group halvm_fs - On any of cluster node , create LVM resource
+# pcs resource create xfs_fs Filesystem device="/dev/{volume-grp}/{logical_volume}"directory="/mnt" fstype="xfs" --group halvm_fs - Now create FileSystem resource from any of the cluster node
+# lvchange -an /dev/vg_name/lv_name - deactivate logical volume
+# vgchange -an vg_name - deactivate volume group
+# lvchange -ay /dev/vg_name/lv_name - activate logical volume
+# vgchange -ay vg_name - activate volume group
+# ls -Zd /web - show selinux configuration on directory
 # vgdisplay - show logical volume groups
 # lvdisplay - show logical volumes
+configuration file - /etc/firewalld/zones/public.xml
+# nohup command >/dev/null 2>&1 & - runs in background, still doesn't create nohup.out
+# nohup command >/dev/null 2>&1   - doesn't create nohup.out
+# /etc/login.defs - config file contains login properties
+# /etc/defaults/useradd - configuration file for default settings user creation
+# ip route - show routing table on RHEL 7
+# ip address show - show network configuration on RHEL 7
+# ip route add 192.0.2.0/24 via 10.0.0.1 [dev ifname] - route add on RHEL 7
+# parted /dev/sdg print free - show unallocated disk space
+# df -HT - show free disk space on mounted disks
+# udevadm trigger - if you delete all in /dev filesystem, you can recover all with this command
+# find / -user linda - find files in root directory owned by user linda
+# find / -group users - find files in root directory owned by group users
 # postconf - used to configure parameters of postfix
 # postconf -e - change parameters of postfix
 # postqueue -p - show postfix messages in queue
@@ -172,6 +297,69 @@ pam_tally2 --user=agurbanli --reset - command for reset user failed attempts to 
 #########################################################################################################################################
 ---freeipa---
 #  ipa pwpolicy-show --user=username - show users password policy
+
+profile settings for user bash_login bash_logut bashrc
+Following pseudo code explains the sequence of execution of these files.
+execute /etc/profile
+IF ~/.bash_profile exists THEN
+    execute ~/.bash_profile
+ELSE
+    IF ~/.bash_login exist THEN
+        execute ~/.bash_login
+    ELSE
+        IF ~/.profile exist THEN
+            execute ~/.profile
+        END IF
+    END IF
+END IF
+When you logout of the interactive shell, following is the sequence of execution:
+IF ~/.bash_logout exists THEN
+    execute ~/.bash_logout
+END IF
+Please note that /etc/bashrc is executed by ~/.bashrc as shown below:
+# cat ~/.bashrc
+if [ -f /etc/bashrc ]; then
+. /etc/bashrc
+fi
+
+---FreeIpa resolve problem with mkhomedir ---
+# echo session     optional      pam_exec.so /usr/local/bin/restoreconhome.sh  >> /etc/pam.d/password-auth 
+
+# vim  /usr/local/bin/restoreconhome.sh
+
+#!/bin/bash
+
+DIRECTORY=$HOME
+
+if [[ ! -e $DIRECTORY ]];
+then
+   mkdir -p $DIRECTORY
+   /sbin/restorecon -R /home
+elif [[ ! -d $dir ]];
+then
+    echo "Home directory exist" 1>&2
+fi                                                     
+
+# chmod +x  /usr/local/bin/restoreconhome.sh
+
+# ipa-client-install -d --mkhomedir --domain=rtgs.local --server=rtgsipap01.rtgs.local --realm=RTGS.LOCAL --principal=admin --password=P@ssw0rd  --enable-dns-updates -U - ipa client install
+# ipa-getcert request -r -f /etc/pki/tls/certs/rtpsstgp01.rtps.local.crt -k /etc/pki/tls/private/rtpsstgp01.rtps.local.key -N CN=rtpsstgp01.rtps.local -D rtpsstgp01.rtps.local -K HTTP/rtpsstgp01.rtps.local
+# ipa-client-install 
+# ipa config-mod --defaultshell=/bin/bash - set default shell for all new ipa users
+# ipa user-mod <user> --shell=/bin/bash - set shell for current ipa user.
+Add IPA Client
+# ipa dnsrecord-add fond.local control --a-rec 172.23.2.203 - add dns record to ipa server
+# ipa-client-install --server=dlp.ipa.srv.world --domain ipa.srv.world
+# ipa-client-install --mkhomedir
+# ipa dnsrecord-add fond.local hesabat --a-rec 172.25.2.12
+# ipa dnsrecord-add 2.25.172.in-addr.arpa 12 --ptr-rec hesabat.fond.local
+# firewall-cmd --add-service={freeipa-ldap,freeipa-ldaps,dns,ntp} --permanent
+# firewall-cmd --reload
+
+# authconfig --enablemkhomedir --update - fix problem mkhomedir ipa
+# sudo cp /etc/skel/.bashrc ~ fix bashrc problem on home directory
+# echo 		ALL            ALL = (ALL) NOPASSWD: ALL >> /etc/sudoers - set sudo without password for all
+# ldapsearch -x uid=admin
 #########################################################################################################################################
 ---suid,sgid,sticky bit---
 SUID (NUMERIC VALUE = 4) (RELEATIVE VALUE = u+s) - only effective on files none on directories. Other users have permission to executes file with permissions of file owner.
@@ -181,4 +369,114 @@ SGID (NUMERIC VALUE = 2) (RELEATIVE VALUE = g+s) - effective on files and direct
 # chmod g+s /somedirectory
 Sticky bit (NUMERIC VALUE = 1) (RELEATIVE VALUE = +t) - effective only on directories. Only owner of the file created in directory can delete it
 # chmod +t somefile
+#########################################################################################################################################
+---kubernetes---
+# kubectl get nodes -o wide - node siyahisini gosterir
+# kubectl get pods - podlarin siyahisi
+# kubectl exec -it ilkpod -c nginx-- /bin/bash - pod daxilindeki nginx konteynerinin konsoluna qosulmaq
+# kubectl port-forward POD_NAME HOST_PORT:POD_PORT - host portunun pod portuna yoneldilmesi
+#########################################################################################################################################
+---nfs---
+NFS Server, IP 10.1.1.100
+NFS Client, IP 10.1.1.18
+
+NFS Server configuration
+# yum install nfs-utils rpcbind
+# mkdir -p /opt/nfs
+# vim /etc/exports
+/opt/nfs 10.1.1.18(no_root_squash,rw,sync)
+# firewall-cmd --zone=public --add-port=2049/tcp --permanent
+# firewall-cmd --reload
+# service rpcbind start; service nfs start
+# service nfs status
+
+NFS Client configuration
+# yum install nfs-utils rpcbind
+# service rpcbind start
+# mkdir -p /mnt/nfs
+# mount 10.1.1.110:/opt/nfs /mnt/nfs/
+#########################################################################################################################################
+---ansible---
+# ansible <client> -m ping - control connection to ansible clients
+# ansible-inventory --list - list all ansible clients configuration
+# ansible-inventory --graph - list all ansible clients in graphic mode
+# ansible <client> -m setup - show client configurations
+# ansible <client> -m shell -a "command-to-run" - run command on client
+# ansible <client> -m copy -a "src=file.txt dest=/directory/to/move/" - copy local file to remote server
+# ansible <client> -m copy -a "src=file.txt dest=/directory/to/move mode=755" - copy local file to remote server with specific permissions
+# ansible <client> -m copy -a "src=file.txt dest=/directory/to/move/" -b - copy local file to remote server with sudo privleges, -b impression means sudo
+# ansible <client> -m file -a "path=/path/to/file/file.txt state=absent" - remove file(or directory) on client machine
+# ansible <client> -m get_url -a "https://www.example.com/file.zip dest=/home/agurbanli" - download zip file to specific directory on client machine
+# ansible <client> -m yum -a "name=telnet state=latest" - yum module for install latest version of software telnet  on client machine.
+# ansible <client> -m yum -a "name=telnet state=installed" - analog of the yum install software on the client machine
+# ansible <client> -m yum -a "name=telnet state=removed" - remove installed software on client machine
+# ansible <client> -m uri -a "url=http://www.example.com/url-to-read" - start on client machine curl to retrieve url
+# ansible <client> -m uri -a "url=http://www.example.com/url-to-read return_content=yes" - return content of web site
+# ansible <client> -m shell -a "command-to-run" -vvv - run command on client machine verbose impression, information
+# ansible-doc --list - list all modules in ansible
+# ansible-playbook -i inventory my.yml \ --extra-vars 'ansible_become_pass=YOUR-PASSWORD-HERE' - run ansible with sudo password
+# ansible rtgsclient -m setup -a filter=*ipv4 - 
+# ansible httpd -i /ansible/inv.ini -b -m yum -a "name=httpd state=latest" -t 100 - add hoc command for installing httpd with becoming to root user
+
+ansible_host= - hostname(ip) of client
+ansible_user= - username for connecting to remote client
+ansible_ssh_private_key_file= - location of private key file of remote client
+ansible_port= - variable ssh port for connection 
+
+---image backup---
+---Image Backup of disk---
+To create a compressed disk image with "dd" :
+Boot into rescue mode with the installation media
+Create a mount point for your external drive:
+# mkdir /mnt/external
+Mount your external drive:
+# mount /dev/sdb1 /mnt/external
+Create the compressed disk image:
+#dd if=/dev/sda | gzip -9 > /mnt/external/filename.img.gz 
+To recover this in future, run the following command :
+# zcat /mnt/external/filename.img.gz | dd of=/dev/sda
+Note: Do not use dd to backup block devices that are currently in use. Doing so will likely cause inconsistency on the filesystem(s).
+
+Create an image of installed system
+To create an image of installed system, get USB of exact same size.
+Recreate the initrd with USB support
+Raw
+# vi /etc/dracut.conf
+        add_drivers+="ehci-hcd uhci-hcd xhci-hcd usb-storage scsi-mod sd-mod sd hid-microsoft hid-generic usbhid"     
+# dracut -f -v
+Force a file check on boot
+Raw
+#  touch /forcefsck
+Create image using dd command:
+Raw
+#  dd if=/dev/sda  of=/dev/<usb device> bs=8192
+Add any subsequent partitions to the usb drive in 4gb chunks.
+Insert usb and boot machine.
+#########################################################################################################################################
+---iscasi---
+---ISCSI---
+---create target on server---
+# fdisk /dev/sdb - create logical disk
+# pvcreate /dev/sdb1 - create physical volume from logical disk
+# partprobe
+# vgcreate newvg /dev/sdb1 - create volume group with new disk
+# lvcreate -n newlv -L +1G newvg - create logical volume on volumegroup newvg and allocate size 1GB to it
+# yum install targetcli - install targetcli command tool
+# targetcli
+>/backstore/block create disk1 /dev/newvg/newlv - create new block from lv newlv
+>/iscsi create iqn.2019-05.local.rtgsadmin- create new targetname
+>/iscsi/ iqn.2019-05.local.rtps:rtgsadmin/tpg1/acls create  iqn.2019-05.local.rtps:rtgsclient - create access list for initiator rtgsadmin
+> /iscsi/ iqn.2019-05.local.rtps:rtgsadmin/tpg1/luns create /backstore/block/disk1 - create new LUN for the target from block
+> /iscsi/ iqn.2019-05.local.rtps:rtgsadmin/tpg1/portals create rtgsclient.rtps.local:3260 - create network portal access for specified host
+>saveconfig
+>exit
+# firewall-cmd --permanent --add-port=3260/tcp
+# firewall-cmd --reload
+---create initiator on client---
+# yum install iscsi-initiator-utils
+# vim /etc/iscsi/initiatorname.iscsi - change initiatorname in config file
+InitiatorName=iqn.2019-05.local.rtps:rtgsclient
+# iscsiadm -m discovery -t st -p rtgsadmin.rtps.local - discover the target
+# iscsiadm -m node -T iqn.2019-05.local.rtps:rtgsadmin -l - initiate the server target with loggining
+# iscsiadm -m session -P3 | grep Attached - check status of target initation
 #########################################################################################################################################
