@@ -1,0 +1,184 @@
+#########################################################################################################################################
+---session---
+# mkdir /var/log/.session && chmod -R 777 /var/log/.session
+add the following lines to /etc/profile
+###### Record terminal sessions ######### 
+if [ "x$SESSION_RECORD" = "x" ]
+then
+timestamp=`date "+%m%d%Y%H%M"`
+output=/var/log/.session/session.$USER.$$.$timestamp
+SESSION_RECORD=started
+export SESSION_RECORD
+script -t -f -q 2>${output}.timing $output
+exit
+fi
+#########################################################################################################################################
+---openscap---
+# yum install openscap-scanner - install openscap scanner
+# yum install scap-security-guide - install scurity-guide
+# oscap oval eval --results scan-oval-results.xml /usr/share/xml/scap/ssg/content/ssg-centos7-ds.xml - generate oval scan
+# oscap oval generate report scan-oval-results.xml > ssg-scan-oval-report.html - generate reports to html
+#  oscap xccdf eval --results xccdf-results.xml --profile xccdf_org.ssgproject.content_profile_pci-dss /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml - scan xccdf for pci-dss compliance for rhel
+# oscap xccdf eval --results scan-results.xml --profile xccdf_org.ssgproject.content_profile_pci-dss /usr/share/xml/scap/ssg/content/ssg-centos7-ds.xml - scan xccdf for pci-dss compliance for centos
+# oscap xccdf generate report --output scan-report.html scan-results.xml - export xccdf pci-dss scan results to html
+# oscap info scan-results.xml | grep "Result ID" - check result id
+# oscap xccdf generate fix --fix-type ansible --result-id "" --output playbook-scan-result.yml scan-results.xml - generate ansible playbook based on results of scan
+ /usr/share/scap-security-guide/ansible/ directory
+#########################################################################################################################################
+---other---
+# systemctl enable firewalld - Enable firewall
+# systemctl start firewalld - Start firewall
+# systemctl status firewalld - Check status firewall
+# firewall-cmd --list-all - List all configuration
+# firelwall-cmd --get-zones - Get firewall zones
+# firewall-cmd --get-services - Get firewall services
+# firewall-cmd --get-default-zone - Get firewall default zone
+# firewall-cmd --set-default-zone - Set firewall default zone
+# firewall-cmd --add-port=3306/tcp - Add tcp port to firewall
+# firewall-cmd --add-port={3306/tcp,5000/tcp,6060/tcp} - Add several tcp ports to firewall
+# firewall-cmd --add-port=5000-5010/tcp - Open ports interval
+# firewall-cmd --remove-port=3306/tcp - Remove port from firewall
+# firewall-cmd --permanent --add-port=2200/tcp Add tcp port permanently
+# firewall-cmd --permanent --remove-port=2200/tcp Remove tcp port permanently
+# firewall-cmd --add-service=mysql - Add service to firewall
+# firewall-cmd --add-service={mysql,http,ntp} - Add several services to firewall
+# firewall-cmd --add-service=mysql --permanently - Add service to firewall permanently,for saving rule after reload firewall
+# firewall-cmd --reload - Firewall reload
+# firewall-cmd --add-forward-port=port=8080:proto=tcp:toport=80 - Port forward all incoming 8080 to 80
+# firewall-cmd --add-forward-port=port=8080:proto=tcp:toport=80:toaddr=192.168.100.221 - Port forward to specific ip
+# firewall-cmd --remove-forward-port=port=8080:proto=tcp:toport=80 - Port forwarding remove-port
+# firelwall-cmd -add-rich-rule='rule vlan6="ipv4" source address="192.168.100.6" accept' - Allow all trafic from ip address
+# firelwall-cmd -add-rich-rule='rule vlan6="ipv4" source address="192.168.122.102" drop' - Drop all trafic from ip address
+# firewall-cmd --permanent --zone=public --add-source=192.168.100.0/24 - Allow subnet access
+# firewall-cmd --permanent --zone=public --add-rich-rule='rule family=ipv4 source address=10.0.0.100/32 reject' - rich rule for rejecting incoming requests from specific ip address
+# firewall-cmd --permanent --zone=public --add-forward-port=port=8888 proto=tcp:toport=80:toaddr=10.0.0.10 - forward incoming requests to port 8888 to port 80 on address 10.0.0.10
+# lvcreate -n testvl -L10G testvg - create new logical voloume "testvl" with size 10G in the "testvg" volume groupe
+# lvextend -L +110M /dev/vg2/lv2 - add capacity to logical volume
+# lvreduce -L -100M /dev/vg2/lv1 - remove capasity from logical volume
+# resize2fs /dev/vg2/lv2 - resize logical volume
+# xfs_growfs - change logical volume size after extending
+# vgcreate testvg /dev/sdb - create new logical volume with name "testvg" on physical device /dev/sdb
+#service sssd stop ; rm -rf /var/log/sssd/ ; rm -rf /var/lib/sss/db/ ; rm -rf /var/lib/sss/mc/* ; service sssd start
+# pvcreate /dev/sbd - create new phisical volume on device /dev/sdb
+# vgdisplay - show logical volume groups
+# lvdisplay - show logical volumes
+# postconf - used to configure parameters of postfix
+# postconf -e - change parameters of postfix
+# postqueue -p - show postfix messages in queue
+# postqueue -f - flush the postfix queue
+# systemd-cgtop - real-time system resources using 
+# find /cma/ -name "*.log" -print0 | xargs -0 rm - delete big size logs(Argument list too long)
+# pvdisplay - show physical volumes
+# cat /proc/sys/kernel/{ostype,osrelease,version} - show version
+# cat /etc/*release - show release version
+# :%s/dc=my-domain/dc=example/gi - change string in file
+# cat /proc/<tomcat pid>/limits - check process limit
+# export DISPLAY=192.168.100.39:1.0 - export the DISPLAY to local browser(Xbrowser)
+# cfdisk /dev/sda - show free space on disk
+# pdbedit -L - list local samba users
+# rpm -ivh --nodeps package_name.rpm - install without dependencies
+# runuser -l  userNameHere -c 'command' - run command as another user
+# rpm --nodeps -e package_name.rpm - remove(deinstall) package without dependencies
+# clusvcadm -R haproxygr - LB(haproxy) cluster restart
+# clusvcadm -d haproxygr - LB(haproxy) cluster disable
+# clusvcadm -e haproxygr - LB(haproxy) cluster enable
+# clusvcadm -r haproxygr - LB(haproxy) cluster move to another nodeps
+# lsblk - list block devices
+# blkid - show device attributes (device ID)
+# netstat -nltp - netstat
+# chmod u+s /usr/sbin/clustat - privlege for execute
+# scp your_username@remotehost.edu:foobar.txt /some/local/directory - Copy the file "foobar.txt" from a remote host to the local host
+# scp foobar.txt your_username@remotehost.edu:/some/remote/directory - Copy the file "foobar.txt" from the local host to a remote host
+# scp -r foo your_username@remotehost.edu:/some/remote/directory/bar - Copy the directory "foo" from the local host to a remote host's directory "bar"
+# scp your_username@rh1.edu:/some/remote/directory/foobar.txt \ - Copy the file "foobar.txt" from remote host "rh1.edu" to remote host "rh2.edu"
+# scp foo.txt bar.txt your_username@remotehost.edu:~ - Copying the files "foo.txt" and "bar.txt" from the local host to your home directory on the remote host
+# scp -P 2264 foobar.txt your_username@remotehost.edu:/some/remote/directory - Copy the file "foobar.txt" from the local host to a remote host using port 2264
+# scp your_username@remotehost.edu:/some/remote/directory/\{a,b,c\} . - Copy multiple files from the remote host to your current directory on the local host
+# scp your_username@remotehost.edu:~/\{foo.txt,bar.txt\} . - Copy multiple files from the remote host to your current directory on the local host
+# cat /var/log/secure | grep 'sshd.*Invalid' - show failed logons
+# no_root_squash - the option in /etc/exports,this means that, when client mapped exported directory as root user mapped as nobody user and he can't have root permissions as the local root user
+# all_squash -  the option in /etc/exports,this means that, when client mapped exported directory as all users mapped as nobody user
+# exportfs -r - reload nfs server without restarting it
+# cat /var/log/secure | grep 'sshd.*opened' - show successfull logons
+# tcpdump -i any -n tcp port 10050 - block the tcp connections
+# date --set HH:MM:SS - time set
+# date --set HH:MM:SS --utc - time set for UTC
+# date --set YYYY-MM-DD - date set
+# fg - move running shell job from background to foreground
+# bg - move running shell job from foreground to background
+# jobs - show which jobs are currently running from this shell
+# arch - show operation sistem achitecture x64 or x86
+# virsh console wm1 - connect to virtual machine with name wm1
+# vgreduce --removemissing --force vg_srvlinux - remove missing physical volume group
+# scp -P 3308 /home/samba/.ssh/id_rsa.pub samba@192.168.100.70:/home/samba/.ssh/authorized_keys - ssh autorized from aix to linux
+# usermod -a -G mygruop myuser - add user to groupe
+# usermod -a -G mygruop myuser - remove user from group
+# wall "some text" - send text message to other users
+# parted /dev/sda - start partet for remove partition in device
+# print - View the current partition table to determine the minor number of the partition to remove
+# rm 3 - remove partition
+# lsblk
+# swapoff -a - unmount swap
+# swapoff /dev/sda4 - unmount swap space
+# swapon -a - mount swap space
+# mkswap /dev/sda - make device as swap
+# fdisk -l - shows device
+# echo "- - -" > /sys/class/scsi_host/host#/scan - scan and identifiy new added disck
+# swapon -s - show swap space
+# useradd -u 1234 alex - add user and set id
+# authconfig-tui - configure authentication without starting gui
+# useradd -G {group-name} username - add new user in group
+# usermod -m -d /path/to/new/home/dir userNameHere - change existing user home directory
+# smbpasswd -a smammadov - create smb password for user
+# testparm -s - show samba shared folders
+pam_tally2 --user=agurbanli --reset - command for reset user failed attempts to system
+# chown -R user:group /foldername - change owner of folder (file)
+# vgremove officevg - delete the vg with name officevg
+# mkfs.ext4 /dev/my_vg/my_lv - create ext4 filesystem on logical volume with name my_lv
+# mount /dev/VolGroup00/lv_1 /mnt - mount logical volume lv_1 to /mnt directory
+# ifconfig tr0 detach - remove the interace with name tr0 from interfaces list
+# ifconfig en0 mtu  12000 - change maximum transmission unit (MTU) of en0 to 12000 bytes
+# blkid - shows device id for mount
+# ps -fu rts | grep -i ./rtsx - show status process of ./rtsx running by user rts
+# grep -rnw '/cma/rtsx/' -e "151211NABZAZ2CARTS0001005533" - find string in files
+# man -k time | grep real - show manual of time command amd information with 'real' string
+# ls [hm]ost* - display all files with start h or m and ends with ost string
+# ls *[0-9]* - display all files include numbers in name
+#ss -a - show connected sockets(ports) to services
+# systemctl get-default - check default systemd target(graphical.target,multi-user.tartget,rescue.target,emergency.target)
+# ls -d *[0-9]* - display all files include numbers in name
+# ls [!hm]ost - display all files started not with h or m and ends with ost
+# ps aux | awk '{print $2}' - display second column of displayed information
+# ps aux | awk '{print $2}' | sort -n - display second column of displayed information and sort by number
+# find / -name "*.rpm" 2> /dev/null - find all rpm files in /root directory and send all errors to /dev/null device
+# locate test.txt - to locate where the test.txt file. if is not displayed the location of test.txt file, you must first run command updatedb for updating information
+# tar cvf /root/etc.tar /etc - create tar file of /etc filesystem in root directory
+#  ip -s lin show ens192 - show interface packets transfer counter
+# tar czf /root/etc.gz2 /etc - create compressed tar file of /etc filesystem in root directory
+# tar xvf /root/etc.tar -C /root/etc - extract the etc.tar to etc directory
+# tar -cf archivename.tar /home - arhcive files in home directory to archivename.tar file
+# tar -cf archivename.tar /home - arhcive files in home directory to archivename.tar file with information
+# tar -rvf archivename.tar /tmp - add files in /tmp directory to the current archivename.tar file
+# tar -tvf archivename.tar - show files archived in tar file
+# echo "redhat" | passwd --stdin gabriel - change password for user gabriel and set password redhat for it
+# rsync -rvz -e ssh  --remove-source-files /M_SWIFT/ all_adm@192.168.36.2:/home/all_adm/swift
+###########################################################################################################################################
+---openssl---
+# openssl pkcs12 -in <filename.pfx> -nocerts -nodes | sed -ne '/-BEGIN PRIVATE KEY-/,/-END PRIVATE KEY-/p' > rtsx.cbar.az.key.pem - export private key from pfx file
+# openssl pkcs12 -in <filename.pfx> -clcerts -nokeys | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > rtsx.cbar.az.pem - export certificate from pfx file
+# openssl pkcs12 -in <filename.pfx> -cacerts -nokeys -chain | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ca.pem - export ca from pfx file
+# openssl x509 -outform der -in your-cert.pem -out your-cert.crt - convert pem to crt
+# openssl pkcs12 -in rtsx.cbar.az-live.pfx -out privatekey.pem -nodes - convert pfx to pem
+#########################################################################################################################################
+---freeipa---
+#  ipa pwpolicy-show --user=username - show users password policy
+#########################################################################################################################################
+---suid,sgid,sticky bit---
+SUID (NUMERIC VALUE = 4) (RELEATIVE VALUE = u+s) - only effective on files none on directories. Other users have permission to executes file with permissions of file owner.
+# chmod u+s somefile
+SGID (NUMERIC VALUE = 2) (RELEATIVE VALUE = g+s) - effective on files and directories. When set to the file, other users executes files with permissons of group owner. When set to the directory  its means that all of the items created in directory automatically get the group owner
+# chmod g+s somefile
+# chmod g+s /somedirectory
+Sticky bit (NUMERIC VALUE = 1) (RELEATIVE VALUE = +t) - effective only on directories. Only owner of the file created in directory can delete it
+# chmod +t somefile
+#########################################################################################################################################
