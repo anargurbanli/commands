@@ -1,6 +1,6 @@
 #########################################################################################################################################
 ---session---
-# mkdir /var/log/.session && chmod -R 777 /var/log/.session
+# mkdir /var/log/.session && chmod -R 733 /var/log/.session
 add the following lines to /etc/profile
 ###### Record terminal sessions ######### 
 if [ "x$SESSION_RECORD" = "x" ]
@@ -9,9 +9,21 @@ timestamp=`date "+%m%d%Y%H%M"`
 output=/var/log/.session/session.$USER.$$.$timestamp
 SESSION_RECORD=started
 export SESSION_RECORD
-script -t -f -q 2>${output}.timing $output
+script -t -f -q 2> /dev/null $output
 exit
 fi
+
+---session logrotate---
+/var/log/.session/session.* {
+        su root root
+        daily
+        notifempty 
+        missingok
+        rotate 14
+        compress
+        delaycompress
+}
+-----------------------------
 #########################################################################################################################################
 ---openscap---
 # yum install openscap-scanner - install openscap scanner
