@@ -2,27 +2,33 @@
 ---session---
 # mkdir /var/log/.session && chmod -R 733 /var/log/.session
 add the following lines to /etc/profile
-###### Record terminal sessions ######### 
+###### Record terminal sessions #########
 if [ "x$SESSION_RECORD" = "x" ]
 then
-timestamp=`date "+%m%d%Y%H%M"`
-output=/var/log/.session/session.$USER.$$.$timestamp
+timestamp=`date "+%d%m%Y%H%M"`
+output=/var/log/.session/session.$USER.$timestamp
 SESSION_RECORD=started
 export SESSION_RECORD
 script -t -f -q 2> /dev/null $output
 exit
 fi
+#########################################
 
 ---session logrotate---
 /var/log/.session/session.* {
         su root root
         daily
-        notifempty 
+        notifempty
         missingok
-        rotate 14
+        rotate 2
         compress
-        delaycompress
+        dateformat -%d%m%Y
+        create 0644 root root
+postrotate
+        /usr/bin/find /var/log/.session/ -name "session.*" -type f -size 0M -exec rm {} \;
+endscript
 }
+
 -----------------------------
 #########################################################################################################################################
 ---openscap---
