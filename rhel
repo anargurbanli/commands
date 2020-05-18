@@ -23,7 +23,8 @@ fi
         rotate 1
         maxage 7
         compress
-        dateformat -%d%m%Y
+        dateformat +
+        #dateformat -%d-%m-%Y
         create 0644 root root
 postrotate
         /usr/bin/find /var/log/.session/ -name "session.*" -type f -size 0M -exec rm {} \;
