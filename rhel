@@ -55,6 +55,8 @@ endscript
   port protocol="tcp" port="4567" accept'
 # firewall-cmd --reload
 # systemctl start firewalld - Start firewall
+# yum install setroubleshoot setools
+# sealert -a /var/log/audit/audit.log
 # yum install cifs-utils
 # mount -t cifs -o vers=1.0,username=user_name //server_name/share_name /mnt/
 # firewall-cmd --get-zone-of-interface eth0 - Get zone of interface
@@ -87,6 +89,13 @@ endscript
 # lvcreate -n testvl -L10G testvg - create new logical voloume "testvl" with size 10G in the "testvg" volume groupe
 # lvextend -L +110M /dev/vg2/lv2 - add capacity to logical volume
 # lvreduce -L -100M /dev/vg2/lv1 - remove capasity from logical volume
+# subscription-manager unregister
+# subscription-manager remove --all
+# subscription-manager clean
+# yum install setroubleshoot setools
+# journalctl -t setroubleshoot
+# sealert -l "*"
+# sealert -a /var/log/audit/audit.log
 # resize2fs /dev/vg2/lv2 - resize logical volume
 # semanage port -l - show ports restricted by selinux
 # brctl show - show the virtual interface bridges
