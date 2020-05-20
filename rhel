@@ -17,6 +17,8 @@ log file = /var/log/samba/log.%m
 max log size = 50
 log level = 0 
 
+# net ads join -U Administrator
+# yum install bind-utils
 # dig srv _ldap._tcp.dc._msdcs.domain.name
 # service winbind start
 # chkconfig winbind on
