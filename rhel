@@ -40,7 +40,8 @@ group:      files winbind
 # getent passwd DOMAIN\aduser
 
 # vim /etc/sudoersd/groupname
-% CBAR\\dcadmins        ALL=(ALL)       ALL
+% CBAR\\groupname        ALL=(ALL)       ALL
+CBAR\anar_gurbanli      ALL=(ALL)       ALL
 #########################################################################################################################################
 ---session---
 # mkdir /var/log/.session && chmod -R 733 /var/log/.session
