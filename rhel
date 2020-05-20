@@ -1,4 +1,47 @@
 #########################################################################################################################################
+---winbind---
+# yum install samba-client  samba-winbind samba-winbind-clients
+# vim /etc/samba/smb.conf
+[global]
+workgroup = DOMAIN
+realm = DOMAIN.LOCAL
+security = ads
+idmap config * : backend = autorid
+idmap config * : range = 100000-19999999
+idmap config * : rangesize = 1000000
+template homedir = /home/%D/%U
+template shell = /bin/bash
+winbind use default domain = false
+winbind offline logon = true
+log file = /var/log/samba/log.%m
+max log size = 50
+log level = 0 
+
+# dig srv _ldap._tcp.dc._msdcs.domain.name
+# service winbind start
+# chkconfig winbind on
+# wbinfo -t
+# wbinfo -u
+# wbinfo -g
+# authconfig-tui
+select Use Winbind for User Information section and select Use Shadow Passwords, 
+Use Winbind Authentication, and Local authorization is sufficient in the Authentication section. 
+Select Next and on the following screen select OK.
+
+#vim /etc/security/pam_winbind.conf
+require_membership_of = groupname
+
+# authconfig --enablewinbind --enablewinbindauth  --enablemkhomedir --update
+
+# vim /etc/nsswitch.conf
+passwd:     files winbind
+group:      files winbind
+
+# getent passwd DOMAIN\aduser
+
+# vim /etc/sudoersd/groupname
+% CBAR\\dcadmins        ALL=(ALL)       ALL
+#########################################################################################################################################
 ---session---
 # mkdir /var/log/.session && chmod -R 733 /var/log/.session
 add the following lines to /etc/profile
