@@ -1,4 +1,9 @@
-
+#########################################################################################################################################
+---haproxy-key---
+openssl pkcs12 -in cbar.pfx -out cbar_nokey.pem -nokeys
+openssl pkcs12 -in cbar.pfx -out cbar_withkey.pem
+openssl rsa -in cbar_withkey.pem -out cbar.key
+cat cbar_nokey.pem cbar.key > my.pem
 #########################################################################################################################################
 ---subscription---
 # subscription-manager register --org="Central_Bank_of_Azerbaijan_Republic" --activationkey="cbar_key"
@@ -577,4 +582,68 @@ InitiatorName=iqn.2019-05.local.rtps:rtgsclient
 # iscsiadm -m discovery -t st -p rtgsadmin.rtps.local - discover the target
 # iscsiadm -m node -T iqn.2019-05.local.rtps:rtgsadmin -l - initiate the server target with loggining
 # iscsiadm -m session -P3 | grep Attached - check status of target initation
+#########################################################################################################################################
+---haproxy.cfg---
+global
+    daemon
+    maxconn 256
+    user        haproxy
+    group       haproxy
+    chroot      /var/lib/haproxy
+    log 127.0.0.1:514  local0 debug
+
+defaults
+    log global
+    option httplog
+    option dontlognull
+    mode http
+    option forwardfor except 127.0.0.0/8
+    timeout connect 5000ms
+    timeout client 50000ms
+    timeout server 50000ms
+
+listen stats 192.168.232.80:1936
+        mode http
+        log global
+
+        maxconn 10
+
+        clitimeout 100s
+        srvtimeout 100s
+        contimeout 100s
+        timeout queue 100s
+
+        stats enable
+        stats hide-version
+        stats refresh 30s
+        stats show-node
+        stats auth admin:password
+        stats uri  /haproxy?stats
+
+frontend http
+    bind *:80
+    bind *:443 ssl crt /etc/haproxy/ssl/cbar_04202021.cer ca-file /etc/haproxy/ssl/cbar_ca-chain_04202021.cer
+    http-request set-header X-SSL                       %[ssl_fc]
+    http-request set-header X-SSL-Client-Verify         %[ssl_c_verify]
+    http-request set-header X-SSL-Client-SHA1           %{+Q}[ssl_c_sha1]
+    http-request set-header X-SSL-Client-DN             %{+Q}[ssl_c_s_dn]
+    http-request set-header X-SSL-Client-CN             %{+Q}[ssl_c_s_dn(cn)]
+    http-request set-header X-SSL-Issuer                %{+Q}[ssl_c_i_dn]
+    http-request set-header X-SSL-Client-Not-Before     %{+Q}[ssl_c_notbefore]
+    http-request set-header X-SSL-Client-Not-After      %{+Q}[ssl_c_notafter]
+    http-request redirect scheme https code 301 if !{ ssl_fc }
+    default_backend loadbalancer
+
+### acl frontend ######################
+    acl uri_esds path -i -m beg /ESDS
+    use_backend loadbalancer if uri_esds
+
+backend loadbalancer
+    balance roundrobin
+    cookie SERVERID insert indirect nocache
+    #server esds1.cbar.az 192.168.232.96:443 check cookie s1 ssl ca-file /etc/haproxy/ssl/esds.cbar.az.chain.pem
+    #server esds2.cbar.az 192.168.232.66:443 check cookie s2 ssl ca-file /etc/haproxy/ssl/esds.cbar.az.chain.pem
+    server esds1.cbar.az 192.168.232.96:443 check cookie s1 ssl ca-file /etc/haproxy/ssl/cbar_ca-chain_04202021.cer
+    server esds2.cbar.az 192.168.232.66:443 check cookie s2 ssl ca-file /etc/haproxy/ssl/cbar_ca-chain_04202021.cer
+#### acl backend #############
 #########################################################################################################################################
