@@ -31,7 +31,7 @@ Use Winbind Authentication, and Local authorization is sufficient in the Authent
 Select Next and on the following screen select OK.
 
 #vim /etc/security/pam_winbind.conf
-require_membership_of = groupname
+;require_membership_of = groupname
 
 # authconfig --enablewinbind --enablewinbindauth  --enablemkhomedir --update
 
