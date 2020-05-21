@@ -3,10 +3,13 @@
 ---subscription---
 # subscription-manager register --org="Central_Bank_of_Azerbaijan_Republic" --activationkey="cbar_key"
 # subscription-manager attach --auto
+# subscription-manager unregister
+# subscription-manager remove --all
+# subscription-manager clean
 #########################################################################################################################################
 ---realmd---
 # yum install sssd realmd oddjob oddjob-mkhomedir adcli samba-common samba-common-tools krb5-workstation openldap-clients policycoreutils-python -y
-# realm join --user=administrator example.com
+# realm join --user=anar_gurbanli cbar.az
 # realm list
 # id administrator@example.com
 # vim /etc/sssd/sssd.conf
@@ -14,10 +17,14 @@ use_fully_qualified_names = False
 fallback_homedir = /home/%u
 # systemctl restart sssd
 # systemctl enable sssd
-# vim /etc/sudoers.d/groupname
-% groupname        ALL=(ALL)       ALL
-# vim /etc/sudoers.d/username
-anar_gurbanli      ALL=(ALL)       ALL
+# echo > /etc/sudoers.d/linux "%linux        ALL=(ALL)       ALL"
+# echo > /etc/sudoers.d/anar_gurbanli "anar_gurbanli        ALL=(ALL)       ALL"
+
+# realm permit --all
+# realm permit user@example.com
+# realm permit -x user@example.com
+# realm deny --all
+# realm permit -g groupname@cbar.az
 #########################################################################################################################################
 ---winbind---
 # yum install samba-client  samba-winbind samba-winbind-clients
@@ -155,9 +162,6 @@ endscript
 # lvcreate -n testvl -L10G testvg - create new logical voloume "testvl" with size 10G in the "testvg" volume groupe
 # lvextend -L +110M /dev/vg2/lv2 - add capacity to logical volume
 # lvreduce -L -100M /dev/vg2/lv1 - remove capasity from logical volume
-# subscription-manager unregister
-# subscription-manager remove --all
-# subscription-manager clean
 # yum install setroubleshoot setools
 # journalctl -t setroubleshoot
 # sealert -l "*"
