@@ -1,3 +1,8 @@
+
+#########################################################################################################################################
+---subscription---
+# subscription-manager register --org="Central_Bank_of_Azerbaijan_Republic" --activationkey="cbar_key"
+# subscription-manager attach --auto
 #########################################################################################################################################
 ---realmd---
 # yum install sssd realmd oddjob oddjob-mkhomedir adcli samba-common samba-common-tools krb5-workstation openldap-clients policycoreutils-python -y
