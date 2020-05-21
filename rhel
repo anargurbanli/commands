@@ -9,9 +9,10 @@ use_fully_qualified_names = False
 fallback_homedir = /home/%u
 # systemctl restart sssd
 # systemctl enable sssd
-# vim /etc/sudoersd/groupname
-% CBAR\\groupname        ALL=(ALL)       ALL
-CBAR\anar_gurbanli      ALL=(ALL)       ALL
+# vim /etc/sudoers.d/groupname
+% groupname        ALL=(ALL)       ALL
+# vim /etc/sudoers.d/username
+anar_gurbanli      ALL=(ALL)       ALL
 #########################################################################################################################################
 ---winbind---
 # yum install samba-client  samba-winbind samba-winbind-clients
