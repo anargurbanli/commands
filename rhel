@@ -5,6 +5,7 @@
 # growpart /dev/sda 2
 # pvresize /dev/sda2
 # lvextend -l +100%FREE /dev/name-of-volume-group/root
+# lvextend -l +1G /dev/name-of-volume-group/root
 # resize2fs /dev/name-of-volume-group/root
 # xfs_growfs /
 #########################################################################################################################################
