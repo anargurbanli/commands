@@ -58,8 +58,8 @@ use_fully_qualified_names = False
 fallback_homedir = /home/%u
 # systemctl restart sssd
 # systemctl enable sssd
-# echo > /etc/sudoers.d/linux "%linux        ALL=(ALL)       ALL"
-# echo > /etc/sudoers.d/anar_gurbanli "anar_gurbanli        ALL=(ALL)       ALL"
+# echo "%linux        ALL=(ALL)       ALL" > /etc/sudoers.d/linux
+# echo "anar_gurbanli        ALL=(ALL)       ALL" > /etc/sudoers.d/anar_gurbanli 
 
 # realm permit --all
 # realm permit user@example.com
