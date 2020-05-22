@@ -1,4 +1,13 @@
 #########################################################################################################################################
+---extend disk with root---
+# yum -y install cloud-utils-growpart
+# growpart -h
+# growpart /dev/sda 2
+# pvresize /dev/sda2
+# lvextend -l +100%FREE /dev/name-of-volume-group/root
+# resize2fs /dev/name-of-volume-group/root
+# xfs_growfs /
+#########################################################################################################################################
 ---selinux---
 # ausearch -m AVC,USER_AVC,SELINUX_ERR -ts today - find selinux errors
 # ausearch -m AVC,USER_AVC,SELINUX_ERR,USER_SELINUX_ERR -ts recent
