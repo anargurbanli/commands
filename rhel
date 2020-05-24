@@ -512,10 +512,16 @@ Sticky bit (NUMERIC VALUE = 1) (RELEATIVE VALUE = +t) - effective only on direct
 # chmod +t somefile
 #########################################################################################################################################
 ---kubernetes---
-# kubectl get nodes -o wide - node siyahisini gosterir
-# kubectl get pods - podlarin siyahisi
-# kubectl exec -it ilkpod -c nginx-- /bin/bash - pod daxilindeki nginx konteynerinin konsoluna qosulmaq
-# kubectl port-forward POD_NAME HOST_PORT:POD_PORT - host portunun pod portuna yoneldilmesi
+# kubectl get nodes -o wide - show node list full
+# kubectl get pods - show pods
+# kubectl exec -it ilkpod -c nginx-- /bin/bash - connect to nginx container inside pod
+# kubectl port-forward POD_NAME HOST_PORT:POD_PORT - forward node port to pod port
+/var/lib/kubelet/pods/PODUID/volumes/kubernetes.io~empty-dir/VOLUMENAME - emptydir volume mount directory in node
+cd /var/lib/kubelet/pods/b0923a3f-29e8-4ac5-aa5f-94318c0a859b
+# kubectl logs pod1 - get logs of pod1
+# kubectl get pods -n <namespace> <pod-name> -o jsonpath='{.metadata.uid}' - get uid of specific pod
+# 
+
 #########################################################################################################################################
 ---nfs---
 NFS Server, IP 10.1.1.100
