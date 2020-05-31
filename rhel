@@ -1,5 +1,5 @@
 #########################################################################################################################################
----extend disk with root---
+---extend disk with root path---
 # yum -y install cloud-utils-growpart
 # growpart -h
 # growpart /dev/sda 2
