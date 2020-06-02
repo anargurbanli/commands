@@ -255,6 +255,7 @@ endscript
 # yum group info "Groupname" - show packages in group
 # rpm -qc httpd - show httpd package configuration files
 # systemctl snapshot snapshotname - create snapshoot
+# find . -type f -exec sed -i 's/node1/bksrk8svt1/g' {} + - find and change string
 # nmcli connection add type bond ifname bond0 con-name bond0 mode active-backup miimon 100 ip4 192.168.1.10/24 gw4 192.168.1.1
 # nmcli connection add type bond-slave ifname eno1 con-name eno1-slave master bond0
 # nmcli connection add type bond-slave ifname eno2 con-name eno2-slave master bond0
