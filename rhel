@@ -9,6 +9,13 @@
 # resize2fs /dev/name-of-volume-group/root
 # xfs_growfs /
 #########################################################################################################################################
+---install GUI---
+# yum groupinstall "Server with GUI"
+# systemctl set-default graphical.target
+# systemctl start graphical.target
+# systemctl reboot
+#########################################################################################################################################
+
 ---selinux---
 # ausearch -m AVC,USER_AVC,SELINUX_ERR -ts today - find selinux errors
 # ausearch -m AVC,USER_AVC,SELINUX_ERR,USER_SELINUX_ERR -ts recent
