@@ -554,6 +554,11 @@ NFS Client configuration
 # mount 10.1.1.110:/opt/nfs /mnt/nfs/
 #########################################################################################################################################
 ---ansible---
+ansible all -m user -a "name=automation state=present" -u root --ask-pass
+ansible all -m shell -a "echo devops | passwd --stdin automation" -u root --ask-pass
+ansible all -m shell -a "echo \"automation ALL=(ALL:ALL) NOPASSWD:ALL\" > /etc/sudoers.d/automation\" -u root --ask-pass
+ansible all -m authorized_key -a "user=automation key=\"{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}\" state=present" -u automation --ask-pass
+
 # ansible <client> -m ping - control connection to ansible clients
 # ansible-inventory --list - list all ansible clients configuration
 # ansible-inventory --graph - list all ansible clients in graphic mode
