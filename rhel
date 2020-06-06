@@ -185,6 +185,8 @@ endscript
 # firewall-cmd --zone=public --list-interfaces - Get interfaces of zone
 # firewall-cmd --zone=internal --change-interface=eth0 - Chante zone for interface
 # systemctl status firewalld - Check status firewall
+# systemctl enable ngt_guest_agent
+# systemctl restart ngt_guest_agent
 # firewall-cmd --list-all - List all configuration
 # firelwall-cmd --get-zones - Get firewall zones
 # firewall-cmd --get-services - Get firewall services
