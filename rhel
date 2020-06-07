@@ -1,5 +1,5 @@
 ---git---
-$ git clone https://
+$ git clone https://url-address
 $ git add .
 $ git commit -m "your comment there"
 $ git push
