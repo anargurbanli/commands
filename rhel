@@ -1,3 +1,8 @@
+---kube home config---
+$ mkdir -p $HOME/.kube
+$ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
 ---git---
 $ git clone https://url-address
 $ git add .
