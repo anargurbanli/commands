@@ -1,8 +1,8 @@
 ---Configure rsyslog securely---
 $ openssl genrsa 2048 > ca-key.pem - generate ca key
 $ openssl req -new -x509 -nodes -days 3600 -key ca-key.pem -out ca-cert.pem - create ca certificate from key
-$ scp -P 53123 ca-* username@syslog-client:~ - copy CA key to syslog-server
-$ scp -P 53123 ca-* username@syslog-server:~ - copy CA key to syslog-client
+$ scp -P 53123 ca-* cl* username@syslog-client:~ - copy CA key to syslog-server
+$ scp -P 53123 ca-* cl* username@syslog-server:~ - copy CA key to syslog-client
 --syslog-server configuration---
 $ openssl req -newkey rsa:2048 -days 3600 -nodes -keyout server-key.pem -out server-req.pem
 $ openssl rsa -in server-key.pem -out server-key.pem
@@ -27,15 +27,14 @@ $ firewall-cmd --reload
 $ systemctl restart rsyslog
 --syslog-client configuration---
 $ yum install rsyslog rsyslog-gnutls
-$ openssl x509 -req -in client-req.pem -days 3600 -CA ca-cert.pem -CAkey ca-key.pem -set_serial 01 -out client-cert.pem
 $ openssl req -newkey rsa:2048 -days 3600 -nodes -keyout client-key.pem -out client-req.pem
 $ openssl rsa -in client-key.pem -out client-key.pem
+$ openssl x509 -req -in client-req.pem -days 3600 -CA ca-cert.pem -CAkey ca-key.pem -set_serial 01 -out client-cert.pem
 --add to rsyslog.conf---
 $DefaultNetstreamDriver gtls
 $DefaultNetstreamDriverCAFile /etc/pki/tls/certs/ca-cert.pem
 $DefaultNetstreamDriverCertFile /etc/pki/tls/certs/client-cert.pem
 $DefaultNetstreamDriverKeyFile /etc/pki/tls/private/client-key.pem
-$ModLoad imtcp
 $ActionSendStreamDriverMode 1 
 $ActionSendStreamDriverAuthMode x509/name
 $ActionSendStreamDriverPermittedPeer rsys-server.cbar.az
