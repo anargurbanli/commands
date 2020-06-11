@@ -1,3 +1,8 @@
+---iperf check network bandwith---
+$ yum install iperf3
+$ iperf3 -i 5 -s  - on server listen as server in 5 second periods
+$ iperf3 -i 5 -t 60 -c <server hostname or ip address> - on client
+
 ---Configure rsyslog securely---
 $ openssl genrsa 2048 > ca-key.pem - generate ca key
 $ openssl req -new -x509 -nodes -days 3600 -key ca-key.pem -out ca-cert.pem - create ca certificate from key
