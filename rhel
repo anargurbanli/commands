@@ -49,7 +49,6 @@ $ mv client-key.pem ca-key.pem /etc/pki/tls/private/
 $ restorecon -RvF /etc/pki/tls/certs/{ca-cert.pem,client-cert.pem}
 $ restorecon -RvF /etc/pki/tls/private/{ca-key.pem,client-key.pem}
 $ systemctl restart rsyslog
-
 ---kube home config---
 $ mkdir -p $HOME/.kube
 $ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
