@@ -34,6 +34,7 @@ $ yum install rsyslog rsyslog-gnutls
 $ openssl req -newkey rsa:2048 -days 3600 -nodes -keyout client-key.pem -out client-req.pem
 $ openssl rsa -in client-key.pem -out client-key.pem
 $ openssl x509 -req -in client-req.pem -days 3600 -CA ca-cert.pem -CAkey ca-key.pem -set_serial 01 -out client-cert.pem
+
 --add to rsyslog.conf---
 $DefaultNetstreamDriver gtls
 $DefaultNetstreamDriverCAFile /etc/pki/tls/certs/ca-cert.pem
