@@ -222,6 +222,7 @@ $ firewall-cmd --permanent --zone=public --add-rich-rule='
   rule family="ipv4"
   source address="1.2.3.4/32"
   port protocol="tcp" port="4567" accept'
+$ find . -type f -exec sed -i 's/node1/bksrk8svt1/g' {} +
 $ firewall-cmd --reload
 $ systemctl start firewalld - Start firewall
 $ sudo mount -o remount,exec /tmp - set tmp as executable
@@ -234,6 +235,7 @@ $ firewall-cmd --zone=public --list-interfaces - Get interfaces of zone
 $ firewall-cmd --zone=internal --change-interface=eth0 - Chante zone for interface
 $ systemctl status firewalld - Check status firewall
 $ systemctl enable ngt_guest_agent
+$ /usr/sbin/haproxy -c -V -f /etc/haproxy/haproxy.cfg - check haproxy configuration
 $ systemctl restart ngt_guest_agent
 $ firewall-cmd --list-all - List all configuration
 $ firelwall-cmd --get-zones - Get firewall zones
