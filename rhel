@@ -214,6 +214,15 @@ $ oscap info scan-results.xml | grep "Result ID" - check result id
 $ oscap xccdf generate fix --fix-type ansible --result-id "" --output playbook-scan-result.yml scan-results.xml - generate ansible playbook based on results of scan
  /usr/share/scap-security-guide/ansible/ directory
 ---other---
+$ heketi-cli cluster list - show heketi cluster list
+$ heketi-cli node list - show heketi nodes list
+$ heketi-cli cluster info <clusterid> - show info about cluster with id <clusterid>
+$ heketi-cli device info <deviceid> - show info about device in cluster with id <deviceid>
+$ heketi-cli node info <nodeid> - show info about node in cluster with id <nodeid>
+$ heketi-cli volume info <volumeid> - show info about volume in cluster with id <volumeid>
+$ heketi-cli volume create -size=100 - create volume with 100GB size
+$ heketi-cli volume expand -volume=<volumeid> -expand-size=1024 - expand size of volume
+$ heketi-cli volume delete <volumeid>
 $ systemctl enable firewalld - Enable firewall
 $ firewall-cmd --query-panic
 $ firewall-cmd --panic-on
@@ -577,6 +586,8 @@ $ kubectl port-forward POD_NAME HOST_PORT:POD_PORT - forward node port to pod po
 cd /var/lib/kubelet/pods/b0923a3f-29e8-4ac5-aa5f-94318c0a859b
 $ kubectl logs pod1 - get logs of pod1
 $ kubectl get pods -n <namespace> <pod-name> -o jsonpath='{.metadata.uid}' - get uid of specific pod
+$ kubectl describe endpoints - get k8s enpoints
+
 ---nfs---
 NFS Server, IP 10.1.1.100
 NFS Client, IP 10.1.1.18
