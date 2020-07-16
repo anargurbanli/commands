@@ -21,6 +21,47 @@ $InputTCPServerStreamDriverMode 1
 $InputTCPServerStreamDriverAuthMode x509/name
 $InputTCPServerStreamDriverPermittedPeer rsys-client.cbar.az
 $InputTCPServerRun 6514
+
+#### GLOBAL DIRECTIVES ####
+$template RemoteLogs,"/archive/%$YEAR%-%$MONTH%-%$DAY%/%HOSTNAME%-%FROMHOST-IP%/%PROGRAMNAME%.log"
+*.* ?RemoteLogs
+& stop
+---logrotate-syslog---
+/var/log/cron
+/var/log/maillog
+/var/log/messages
+/var/log/secure
+/var/log/spooler
+{
+    su root root
+    daily
+    missingok
+    sharedscripts
+    rotate 1
+    postrotate
+        /bin/bash /etc/init.d/rotate.sh
+        /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
+    endscript
+}
+---rotate.sh---
+#!/bin/bash
+
+newdir=/archive/`date +%d%m%Y`
+
+mkdir $newdir
+cp /var/log/messages $newdir
+cp /var/log/cron $newdir
+cp /var/log/maillog $newdir
+cp /var/log/secure $newdir
+cp /var/log/spooler $newdir
+cp /var/log/.session/session* $newdir
+
+find /var/log/ -name "messages-*" -type f -exec rm -rf {} \;
+find /var/log/ -name "cron-*" -type f -exec rm -rf {} \;
+find /var/log/ -name "maillog-*" -type f -exec rm -rf {} \;
+find /var/log/ -name "secure-*" -type f -exec rm -rf {} \;
+find /var/log/ -name "spooler-*" -type f -exec rm -rf {} \;
+find /var/log/.session/ -name "session.*" -type f -exec rm -rf {} \;
 ------------------------------------------------------------------
 $ mv server-cert.pem ca-cert.pem /etc/pki/tls/certs/
 $ mv server-key.pem ca-key.pem /etc/pki/tls/private/
@@ -202,6 +243,14 @@ postrotate
         /usr/bin/find /var/log/.session/ -name "session.*" -type f -size 0M -exec rm {} \;
 endscript
 }
+---session2---
+add the following lines to /etc/profile
+
+userinfo=$(echo with $(whoami)" from: "$(who am i | awk '{print $5}'))
+PROMPT_COMMAND='RETRN_VAL=$?;logger -p local3.debug "$userinfo [$$]: $(HISTTIMEFORMAT="";history 1 | sed "s/^[ ]*[0-9]\+[ ]*//" ) [result:$RETRN_VAL]"'
+export PROMPT_COMMAND
+add the following lines to /etc/rsyslog.conf
+local3.*	/var/log/.session/session.log
 ---openscap---
 $ yum install openscap-scanner - install openscap scanner
 $ yum install scap-security-guide - install scurity-guide
