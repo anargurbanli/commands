@@ -213,6 +213,14 @@ $ oscap xccdf generate report --output scan-report.html scan-results.xml - expor
 $ oscap info scan-results.xml | grep "Result ID" - check result id
 $ oscap xccdf generate fix --fix-type ansible --result-id "" --output playbook-scan-result.yml scan-results.xml - generate ansible playbook based on results of scan
  /usr/share/scap-security-guide/ansible/ directory
+---katello---
+curl --insecure --output katello-ca-consumer-latest.noarch.rpm https://satellite.cbar.az/pub/katello-ca-consumer-latest.noarch.rpm
+yum localinstall katello-ca-consumer-latest.noarch.rpm 
+subscription-manager register --org="Central_Bank_of_Azerbaijan_Republic" --activationkey="cbar_key"
+subscription-manager attach --auto
+subscription-manager repos --enable=rhel-7-server-satellite-tools-6.7-rpms
+yum -y install katello-host-tools katello-host-tools-tracer katello-agent insights-client
+insights-client --register
 ---other---
 $ heketi-cli cluster list - show heketi cluster list
 $ heketi-cli node list - show heketi nodes list
@@ -245,6 +253,7 @@ $ firewall-cmd --zone=internal --change-interface=eth0 - Chante zone for interfa
 $ systemctl status firewalld - Check status firewall
 $ systemctl enable ngt_guest_agent
 $ /usr/sbin/haproxy -c -V -f /etc/haproxy/haproxy.cfg - check haproxy configuration
+$ logrotate --force  /etc/logrotate.d/syslog - logrotate check config
 $ systemctl restart ngt_guest_agent
 $ firewall-cmd --list-all - List all configuration
 $ firelwall-cmd --get-zones - Get firewall zones
