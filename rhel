@@ -153,6 +153,7 @@ $ subscription-manager remove --all
 $ subscription-manager clean
 ---realmd---
 $ yum install sssd realmd oddjob oddjob-mkhomedir adcli samba-common samba-common-tools krb5-workstation openldap-clients policycoreutils-python -y
+$ yum install sssd realmd oddjob oddjob-mkhomedir adcli krb5-workstation openldap-clients
 $ realm join --user=anar_gurbanli cbar.az
 $ realm list
 $ id administrator@example.com
@@ -217,6 +218,23 @@ CBAR\anar_gurbanli      ALL=(ALL)       ALL
 ---session---
 $ mkdir /var/log/.session && chmod -R 733 /var/log/.session
 add the following lines to /etc/profile
+---pass-expire-sh---
+for i in root
+do
+# convert current date to seconds
+currentdate=`date +%s`
+# find expiration date of user
+userexp=`chage -l $i | grep 'Password expires' | cut -d: -f2`
+# convert expiration date to seconds
+passexp=`date -d "$userexp" +%s`
+# find the remaining days for expiry
+exp=`expr \( $passexp - $currentdate \)`
+# convert remaining days from sec to days
+expday=`expr \( $exp / 86400 \)`
+#if [ $expday -le 10 ]; then
+echo $expday > /etc/init.d/root-expire
+#fi
+done
 ---Record terminal sessions---
 if [ "x$SESSION_RECORD" = "x" ]
 then
@@ -235,7 +253,6 @@ fi
         missingok
         rotate 1
         maxage 7
-        compress
         dateformat +
         $dateformat -%d-%m-%Y
         create 0644 root root
@@ -271,6 +288,7 @@ subscription-manager repos --enable=rhel-7-server-satellite-tools-6.7-rpms
 yum -y install katello-host-tools katello-host-tools-tracer katello-agent insights-client
 insights-client --register
 ---other---
+$ firewall-cmd --add-rich-rule='rule protocol value="vrrp" accept' --permanent - add keeapalived protocol to firewalld
 $ heketi-cli cluster list - show heketi cluster list
 $ heketi-cli node list - show heketi nodes list
 $ heketi-cli cluster info <clusterid> - show info about cluster with id <clusterid>
@@ -645,7 +663,12 @@ cd /var/lib/kubelet/pods/b0923a3f-29e8-4ac5-aa5f-94318c0a859b
 $ kubectl logs pod1 - get logs of pod1
 $ kubectl get pods -n <namespace> <pod-name> -o jsonpath='{.metadata.uid}' - get uid of specific pod
 $ kubectl describe endpoints - get k8s enpoints
-
+$ kubectl exec -i -t my-pod --container main-app -- /bin/bash
+$ kubectl get pods --all-namespaces -o jsonpath="{..image}" |tr -s '[[:space:]]' '\n' |sort |uniq -c | less - show all images in all pods
+$ kubectl get pods --all-namespaces - show all namespaces
+$ kubectl get pods -o json | jq '.items[].spec.containers[].env[]?.valueFrom.secretKeyRef.name' | grep -v null | sort | uniq - show secrets
+$ kubectl get pods -o=custom-columns=NAME:.metadata.name,CONTAINERS:.spec.containers[*].name - show all container in pods
+$ kubectl exec -ti pod-name -c container-name bash
 ---nfs---
 NFS Server, IP 10.1.1.100
 NFS Client, IP 10.1.1.18
