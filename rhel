@@ -153,15 +153,11 @@ $ subscription-manager remove --all
 $ subscription-manager clean
 ---realmd---
 $ yum install sssd realmd oddjob oddjob-mkhomedir adcli samba-common samba-common-tools krb5-workstation openldap-clients policycoreutils-python -y
-$ yum install sssd realmd oddjob oddjob-mkhomedir adcli krb5-workstation openldap-clients
 $ realm join --user=anar_gurbanli cbar.az
 $ realm list
-$ id administrator@example.com
-$ vim /etc/sssd/sssd.conf
-use_fully_qualified_names = False
-fallback_homedir = /home/%u
-$ systemctl restart sssd
-$ systemctl enable sssd
+$ sed -i 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+$ sed -i 's/%u@%d/%u/g' /etc/sssd/sssd.conf
+$ systemctl restart sssd && systemctl enable sssd
 $ echo "%linux        ALL=(ALL)       ALL" > /etc/sudoers.d/linux
 $ echo "anar_gurbanli        ALL=(ALL)       ALL" > /etc/sudoers.d/anar_gurbanli 
 
@@ -169,7 +165,7 @@ $ realm permit --all
 $ realm permit user@example.com
 $ realm permit -x user@example.com
 $ realm deny --all
-$ realm permit -g groupname@cbar.az
+$ realm permit -g linux@cbar.az
 $ realm leave example.com
 ---winbind---
 $ yum install samba-client  samba-winbind samba-winbind-clients
@@ -235,6 +231,8 @@ expday=`expr \( $exp / 86400 \)`
 echo $expday > /etc/init.d/root-expire
 #fi
 done
+---sms-gateway---
+wget -O - "http://api.msm.az/sendsms?user=cbarapi&password=GTs3MFwQ&gsm=994552522000&from=BSXM&text=salam"
 ---Record terminal sessions---
 if [ "x$SESSION_RECORD" = "x" ]
 then
@@ -653,6 +651,11 @@ $ chmod g+s somefile
 $ chmod g+s /somedirectory
 Sticky bit (NUMERIC VALUE = 1) (RELEATIVE VALUE = +t) - effective only on directories. Only owner of the file created in directory can delete it
 $ chmod +t somefile
+---docker---
+$ docker rmi $(docker images -q) -f
+$ docker system prune -a - remove all 
+$ docker tag a38859d41e19 anargurbanli/php-fpm-7.0.33 - tag image as docker image for pushing
+$ docker push anargurbanli/php-fpm-7.0.33 - push docker image to docker hub
 ---kubernetes---
 $ kubectl get nodes -o wide - show node list full
 $ kubectl get pods - show pods
@@ -669,6 +672,24 @@ $ kubectl get pods --all-namespaces - show all namespaces
 $ kubectl get pods -o json | jq '.items[].spec.containers[].env[]?.valueFrom.secretKeyRef.name' | grep -v null | sort | uniq - show secrets
 $ kubectl get pods -o=custom-columns=NAME:.metadata.name,CONTAINERS:.spec.containers[*].name - show all container in pods
 $ kubectl exec -ti pod-name -c container-name bash
+$ kubectl run redis --image=redis123 --dry-run -o yaml > pod.yml - no create resource create only yaml
+$ kubectl run redis --image=redis123 --dry-run=client -o yaml > pod.yml - check command
+$ kubect lconfig set-context $(kubectl config current-context) --namespace=dev - set dev namespace as default
+se pod redis --port=6379 --name redis-service --dry-run=client -o yaml
+$ kubectl get ns - check namespaces
+$ kubectl -n dev get svc - show services in namespace with name dev
+$ kubectl set image deployment nginx --image=nginx:1.18 - set image for deployment
+$ kubectl create deployment --image=nginx nginx - create deployment with name nginx
+$ kubectl edit deployment nginx - edit deployment with name nginx
+$ kubectl scale deployment nginx --replicas=5 - scale number of replicas up to 5 for deployment nginx
+$ kubectl taint nodes node-name key=value:taint-effect - effect may be 3 types NoSchedule,PreferNoSchedule,NoExecute
+$ kubectl taint nodes node1 app=blue:NoSchedule -
+$ kubectl label nodes node-name key=value
+$ kubectl label nodes node1 size=Large
+$ kubectl describe node kubemaster | grep Taint
+$ kubectl explain pod --recursive | less
+$ kubectl top node - show node memory and cpu using info
+$ 
 ---nfs---
 NFS Server, IP 10.1.1.100
 NFS Client, IP 10.1.1.18
