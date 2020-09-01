@@ -562,6 +562,8 @@ $ ps aux | awk '{print $2}' - display second column of displayed information
 $ ps aux | awk '{print $2}' | sort -n - display second column of displayed information and sort by number
 $ find / -name "*.rpm" 2> /dev/null - find all rpm files in /root directory and send all errors to /dev/null device
 $ locate test.txt - to locate where the test.txt file. if is not displayed the location of test.txt file, you must first run command updatedb for updating information
+$ echo -n 'secret' | base64
+$ echo -n 'secret-hashed' | base64 --decode
 $ tar cvf /root/etc.tar /etc - create tar file of /etc filesystem in root directory
 $  ip -s lin show ens192 - show interface packets transfer counter
 $ tar czf /root/etc.gz2 /etc - create compressed tar file of /etc filesystem in root directory
@@ -689,7 +691,49 @@ $ kubectl label nodes node1 size=Large
 $ kubectl describe node kubemaster | grep Taint
 $ kubectl explain pod --recursive | less
 $ kubectl top node - show node memory and cpu using info
-$ 
+$ kubectl rollout status deployment/myapp-deployment - check status of deployment
+$ kubectl rollout history deployment/myapp-deployment - check history of deployment operations
+$ kubectl rollout undo deployment/myapp-deployment - rollback deployment
+$ kubectl get pod webapp-color -o yaml > webapp-color.yaml - copy pod configuration to file
+$ kubectl create configmap web-color --from-literal=APP_COLOR=darkblue
+$ kubectl create secret generic my-secret --from-literal=DB_Password=password
+$ kubectl drain node1 - except node1 from cluster and pods on node1 migrated to another nodes
+$ kubectl cordon node1 - pods on node1 not migrated to another nodes, but new pods not scheduled on node1
+$ kubectl uncordon node1 - connect node1 to cluster again
+$ kubeadm upgrade apply v12.2.0 - upgrade kubeadm
+$ kubectl version --short - show kube version
+$ kubectl get all --all-namespaces -o yaml > all-deploy-services.yaml
+
+---upgrade kubernetes services---
+$ kubeadm upgrade plan
+$ kubectl drain node01
+$ apt install kubeadm=1.18.0-00
+$ kubeadm upgrade apply v1.18.0
+$ apt install kubelet=1.18.0-00
+$ apt-get upgrade -y kubeadm=1.12.0-00
+$ apt-get upgrade -y kubetlet=1.12.0-00
+$ kubeadm upgrade node config --kubelet-version v1.12.0
+$ systemctl restart kubelet
+$ kubectl uncordon node01 
+---etcd backup restore---
+1. check etcd backup command options
+$ etcdctl snapshot save -h
+2. check etcd member list
+ETCDCTL_API=3 etcdctl member list --cacert=/etc/kubernetes/pki/etcd/server.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/etcd/server.key --endpoints=127.0.0.1:2379
+3. backup of etcd
+$ ETCDCTL_API=3 etcdctl snapshot save --cacert=/etc/kubernetes/pki/etcd/server.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/etcd/server.key --endpoints=127.0.0.1:2379 /tmp/snapshot-pre-boot.db
+4. check etcd restore command options
+$ etcdctl snapshot restore -h
+5. restore etcd
+$ ETCDCTL_API=3 etcdctl snapshot restore --cacert=/etc/kubernetes/pki/etcd/server.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/etcd/server.key --endpoints=127.0.0.1:2379 --data-dir="/var/lib/etcd-from-backup" --initial-cluster="master=https://127.0.0.1:2380" --name="master" --initial-advertise-peer-urls="https://127.0.0.1:2380" --initial-cluster-token="etcd-cluster-1" /tmp/snapshot-pre-boot.db
+6. vim /etc/kubernetes/manifests/etcd.yaml
+> --data-dir=/var/lib/etcd-from-backup
+> --initial-cluster-token=etcd-cluster-1
+> mountPath: /var/lib/etcd-from-backup
+> hostPath: /var/lib/etcd-from-backup
+7. check etcd was created
+$ watch "docker ps | grep etcd"
+
 ---nfs---
 NFS Server, IP 10.1.1.100
 NFS Client, IP 10.1.1.18
