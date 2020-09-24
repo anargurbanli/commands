@@ -286,6 +286,8 @@ subscription-manager repos --enable=rhel-7-server-satellite-tools-6.7-rpms
 yum -y install katello-host-tools katello-host-tools-tracer katello-agent insights-client
 insights-client --register
 ---other---
+$ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem - generate certificate
+$ find / -xdev -type f -size +100M - find big size files
 $ firewall-cmd --add-rich-rule='rule protocol value="vrrp" accept' --permanent - add keeapalived protocol to firewalld
 $ heketi-cli cluster list - show heketi cluster list
 $ heketi-cli node list - show heketi nodes list
@@ -703,7 +705,23 @@ $ kubectl uncordon node1 - connect node1 to cluster again
 $ kubeadm upgrade apply v12.2.0 - upgrade kubeadm
 $ kubectl version --short - show kube version
 $ kubectl get all --all-namespaces -o yaml > all-deploy-services.yaml
+$ kubectl api-resources - get resource information
+$ kubectl create secret docker-registry private-reg-cred --docker-username=dock_user --docker-password=dock_password --docker-server=myprivateregistry.com:5000 --docker-email=dock_user@myprivateregistry.com
 
+
+---gitlab-runner---
+1. install gitlab-runner on server
+2. run gitlab-runner register
+3. check runner on gitlab web
+4. create new project and add file .gitlab-ci.yml
+.gitlab-ci.yml 
+stages:
+- test
+test_runner:
+  stage: test
+  script:
+    - echo hi
+5. run runner
 ---upgrade kubernetes services---
 $ kubeadm upgrade plan
 $ kubectl drain node01
