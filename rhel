@@ -707,8 +707,19 @@ $ kubectl version --short - show kube version
 $ kubectl get all --all-namespaces -o yaml > all-deploy-services.yaml
 $ kubectl api-resources - get resource information
 $ kubectl create secret docker-registry private-reg-cred --docker-username=dock_user --docker-password=dock_password --docker-server=myprivateregistry.com:5000 --docker-email=dock_user@myprivateregistry.com
-
-
+$ ip netns add red - add new network namespace with name red
+$ ip netns add blue - add new network namespace with name blue
+$ ip netns - show network namespaces
+$ ip netns exec red ip link - run ip link command inside network namespace with name red
+$ ip netns exec red route - show route table inside red namespace
+$ ip link add veth-red type veth peer name veth-blue - create new veth virtual cable 
+$ ip link set veth-red netns red - implement veth-red virtual cable to namespace red
+$ ip link set veth-blue netns blue - implement veth-blue virtual cable to namespace blue
+$ ip -n red addr add 192.168.15.1 dev veth-red - add ip address for virtual cable veth-red
+$ ip -n red addr add 192.168.15.2 dev veth-blue - add ip address for virtual cable veth-blue
+$ ETCDCTL_API=3 etcdctl --endpoints https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/ku
+bernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key snapshot save /opt/etcd-backup.db
+Snapshot saved at /opt/etcd-backup.db - get backup of etcd
 ---gitlab-runner---
 1. install gitlab-runner on server
 2. run gitlab-runner register
