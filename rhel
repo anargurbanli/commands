@@ -277,6 +277,9 @@ $ oscap xccdf generate report --output scan-report.html scan-results.xml - expor
 $ oscap info scan-results.xml | grep "Result ID" - check result id
 $ oscap xccdf generate fix --fix-type ansible --result-id "" --output playbook-scan-result.yml scan-results.xml - generate ansible playbook based on results of scan
  /usr/share/scap-security-guide/ansible/ directory
+$ oscap-ssh joesec@machine1 22 xccdf eval --report remote_report.html --profile ospp /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
+$ oscap-ssh root@bksrcbardbvp2 53123 xccdf eval --report remote_report.html --profile xccdf_org.ssgproject.content_profile_pci-dss /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
+
 ---katello---
 curl --insecure --output katello-ca-consumer-latest.noarch.rpm https://satellite.cbar.az/pub/katello-ca-consumer-latest.noarch.rpm
 yum localinstall katello-ca-consumer-latest.noarch.rpm 
@@ -286,6 +289,21 @@ subscription-manager repos --enable=rhel-7-server-satellite-tools-6.7-rpms
 yum -y install katello-host-tools katello-host-tools-tracer katello-agent insights-client
 insights-client --register
 ---other---
+xfs_repair -v -L /dev/dm-0 - repair boot initramfs
+xfs_repair -v -L /dev/mapper/centos
+########## ---remove lvm and configure grub for boot--- ##########
+$ su -
+$ vi /etc/fstab
+ /dev/mapper/fedora-swap swap                    swap    defaults        0 0
+$ swapoff -a
+$ lvremove /dev/mapper/fedora-swap
+$ vim /etc/default/grub
+GRUB_CMDLINE_LINUX="rd.lvm.lv=fedora/swap vconsole.font=latarcyrheb-sun16 rd.lvm.lv=fedora/root $([ -x /usr/sbin/rhcrashkernel-param ] && /usr/sbin/rhcrashkernel-param || :) rhgb quiet"
+$ grub2-mkconfig -o /boot/grub2/grub.cfg
+$ grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg
+#####################################################################################
+$ ssh-keygen -m PEM -t rsa -b 4096 -q -f /etc/heketi/heketi_key -N '' - create heketi key for rhel8
+$ find . -name '.htaccess' -exec sh -c 'echo "Require user admin" >> {}' \; - find file and add line to it
 $ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem - generate certificate
 $ find / -xdev -type f -size +100M - find big size files
 $ firewall-cmd --add-rich-rule='rule protocol value="vrrp" accept' --permanent - add keeapalived protocol to firewalld
@@ -534,6 +552,12 @@ $ swapoff -a - unmount swap
 $ swapoff /dev/sda4 - unmount swap space
 $ swapon -a - mount swap space
 $ mkswap /dev/sda - make device as swap
+$ swapoff -v /dev/vgroot/lvroot
+$ swapoff -v /dev/vgroot/lvswap
+$ lvresize /dev/vgroot/lvswap -L 16G
+$ mkswap /dev/vgroot/lvswap
+$ swapon -va
+
 $ fdisk -l - shows device
 $ echo "- - -" > /sys/class/scsi_host/host$/scan - scan and identifiy new added disck
 $ swapon -s - show swap space
