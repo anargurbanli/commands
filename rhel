@@ -279,7 +279,108 @@ $ oscap xccdf generate fix --fix-type ansible --result-id "" --output playbook-s
  /usr/share/scap-security-guide/ansible/ directory
 $ oscap-ssh joesec@machine1 22 xccdf eval --report remote_report.html --profile ospp /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
 $ oscap-ssh root@bksrcbardbvp2 53123 xccdf eval --report remote_report.html --profile xccdf_org.ssgproject.content_profile_pci-dss /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
+$ oscap xccdf eval --remediate --profile C2S --results results.xml --report report.html /usr/share/xml/scap/ssg/content/ssg-rhel7-xccdf.xml - scan cis for rhel7
+---kubernetes-calico-change-pod-network-cidr---
+$ kubectl apply -f https://docs.projectcalico.org/manifests/calicoctl.yaml
+$ alias calicoctl="kubectl exec -i -n kube-system calicoctl -- /calicoctl "
+$ calicoctl create -f -<<EOF
+apiVersion: projectcalico.org/v3
+kind: IPPool
+metadata:
+  name: net-pool
+spec:
+  cidr: 10.253.0.0/16
+  ipipMode: Always
+  natOutgoing: true
+EOF
+$ calicoctl get ippool -o wide
+$ calicoctl get ippool -o yaml > pool.yaml
+$ cat pool.yaml 
+apiVersion: projectcalico.org/v3
+items:
+- apiVersion: projectcalico.org/v3
+  kind: IPPool
+  metadata:
+    creationTimestamp: "2021-01-25T18:05:56Z"
+    name: default-ipv4-ippool
+    resourceVersion: "6166259"
+    uid: 3c854d2b-330c-4b3d-b94c-79bf03ce77fb
+  spec:
+    blockSize: 26
+    cidr: 172.16.0.0/16
+    ipipMode: Always
+    natOutgoing: true
+    nodeSelector: all()
+    vxlanMode: Never
+- apiVersion: projectcalico.org/v3
+  kind: IPPool
+  metadata:
+    creationTimestamp: "2021-02-22T10:50:41Z"
+    name: net-pool
+    resourceVersion: "6168466"
+    uid: f2a62d57-66d4-486e-bfbb-5e8cd8f73914
+  spec:
+    blockSize: 26
+    cidr: 172.17.0.0/16
+    ipipMode: Always
+    natOutgoing: true
+    nodeSelector: all()
+    vxlanMode: Never
+kind: IPPoolList
+metadata:
+  resourceVersion: "6168599"
 
+
+$ calicoctl apply -f -<<EOF
+apiVersion: projectcalico.org/v3
+items:
+- apiVersion: projectcalico.org/v3
+  kind: IPPool
+  metadata:
+    creationTimestamp: "2021-01-22T13:27:14Z"
+    name: default-ipv4-ippool
+    resourceVersion: "851"
+    uid: 8e03fb7c-0966-441a-94eb-3277f1e92715
+  spec:
+    blockSize: 26
+    cidr: 192.168.0.0/16
+    ipipMode: Always
+    natOutgoing: true
+	disabled: true
+    nodeSelector: all()
+    vxlanMode: Never
+- apiVersion: projectcalico.org/v3
+  kind: IPPool
+  metadata:
+    creationTimestamp: "2021-02-22T15:17:45Z"
+    name: net-pool
+    resourceVersion: "9167575"
+    uid: 1d88af04-5d5d-4f88-9ff2-3f1b4f7b2e80
+  spec:
+    blockSize: 26
+    cidr: 10.253.0.0/16
+    ipipMode: Always
+    natOutgoing: true
+    nodeSelector: all()
+    vxlanMode: Never
+kind: IPPoolList
+metadata:
+  resourceVersion: "9167651"
+EOF
+
+$ kubectl get no bksrk8svt1.cbar.az -o yaml > file.yaml; sed -i "s/'172.16.0.0/16'/'172.17.0.0/16'/g" file.yaml; kubectl delete no bksrk8svt1.cbar.az && kubectl create -f file.yaml
+$ kubectl get no bksrk8svt2.cbar.az -o yaml > file.yaml; sed -i "s~172.16.1.0/16~172.17.1.0/16~" file.yaml; kubectl delete no bksrk8svt2.cbar.az && kubectl create -f file.yaml
+$ kubectl get no bksrk8svt3.cbar.az -o yaml > file.yaml; sed -i "s~172.16.2.0/16~172.17.2.0/16~" file.yaml; kubectl delete no bksrk8svt3.cbar.az && kubectl create -f file.yaml    
+
+$ kubectl -n kube-system edit cm kubeadm-config
+podSubnet: 10.254.0.0/16
+
+$ sudo vim /etc/kubernetes/manifests/kube-controller-manager.yaml
+    - --cluster-cidr=10.254.0.0/16
+
+$ calicoctl get wep --all-namespaces	
+	
+$ calicoctl delete pool default-ipv4-ippool
 ---katello---
 curl --insecure --output katello-ca-consumer-latest.noarch.rpm https://satellite.cbar.az/pub/katello-ca-consumer-latest.noarch.rpm
 yum localinstall katello-ca-consumer-latest.noarch.rpm 
@@ -765,6 +866,8 @@ test_runner:
   script:
     - echo hi
 5. run runner
+$ gitlab-runner --debug verify - verify runners
+
 ---upgrade kubernetes services---
 $ kubeadm upgrade plan
 $ kubectl drain node01
