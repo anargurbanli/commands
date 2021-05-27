@@ -403,6 +403,9 @@ GRUB_CMDLINE_LINUX="rd.lvm.lv=fedora/swap vconsole.font=latarcyrheb-sun16 rd.lvm
 $ grub2-mkconfig -o /boot/grub2/grub.cfg
 $ grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg
 #####################################################################################
+$ systemd-cgtop - The systemd-cgtop command can be used to see the resource usage
+$ 
+$ dmesg -T --level=err - check dmesg logs
 $ ssh-keygen -m PEM -t rsa -b 4096 -q -f /etc/heketi/heketi_key -N '' - create heketi key for rhel8
 $ find . -name '.htaccess' -exec sh -c 'echo "Require user admin" >> {}' \; - find file and add line to it
 $ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem - generate certificate
@@ -832,6 +835,8 @@ $ kubectl version --short - show kube version
 $ kubectl get all --all-namespaces -o yaml > all-deploy-services.yaml
 $ kubectl api-resources - get resource information
 $ kubectl create secret docker-registry private-reg-cred --docker-username=dock_user --docker-password=dock_password --docker-server=myprivateregistry.com:5000 --docker-email=dock_user@myprivateregistry.com
+$ kubectl scale --replicas=0 deployment <deploymentname> - terminate pod
+$ get pod -n ecbar | grep Evicted | awk '{print $1}' | xargs kubectl delete pod -n ecbar - delete evicted pods 
 $ ip netns add red - add new network namespace with name red
 $ ip netns add blue - add new network namespace with name blue
 $ ip netns - show network namespaces
@@ -842,6 +847,29 @@ $ ip link set veth-red netns red - implement veth-red virtual cable to namespace
 $ ip link set veth-blue netns blue - implement veth-blue virtual cable to namespace blue
 $ ip -n red addr add 192.168.15.1 dev veth-red - add ip address for virtual cable veth-red
 $ ip -n red addr add 192.168.15.2 dev veth-blue - add ip address for virtual cable veth-blue
+---renew kubernetes certificates---
+
+Master
+kubeadm token create
+export NODE=smsrdisworkvp08.cbar.az
+kubectl drain $NODE --delete-local-data --force smsrdisworkvp01.cbar.az --ignore-daemonsets
+
+Worker
+systemctl stop kubelet
+systemctl stop docker
+mkdir /var/lib/kubelet/pki/ARCHIVE
+mv /var/lib/kubelet/pki/* /var/lib/kubelet/pki/ARCHIVE
+mkdir /etc/kubernetes/ARCHIVE
+cp -R /etc/kubernetes/bootstrap-kubelet.conf /etc/kubernetes/ARCHIVE
+new_token=ЧЧЧЧЧЧЧЧЧЧЧЧЧЧЧЧЧЧЧЧЧЧ
+sed -i "s/token: .*/token: $new_token/" /etc/kubernetes/bootstrap-kubelet.conf
+systemctl start docker
+systemctl start kubelet
+
+Master
+kubectl uncordon smsrdisworkvp01.cbar.az
+ export NODE=smsrdisworkvp01.cbar.az
+echo -n | openssl s_client -connect $NODE:10250 2>&1 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | openssl x509 -text -noout | grep Not
 ---backup-etcd---
 $ETCDCTL_API=3 etcdctl --cert=/etc/kubernetes/pki/etcd/server.crt --cacert=/etc/kubernetes/pki/etcd/ca.crt --key=/etc/kubernetes/pki/etcd/server.key snapshot save /opt/snapshot-pre-boot.db
 $ 
