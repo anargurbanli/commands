@@ -771,6 +771,7 @@ $ ipa dnsrecord-add 2.25.172.in-addr.arpa 12 --ptr-rec hesabat.fond.local
 $ firewall-cmd --add-service={freeipa-ldap,freeipa-ldaps,dns,ntp} --permanent
 $ firewall-cmd --reload
 
+$ pwgen -s 14 -1 -y - generate password
 $ authconfig --enablemkhomedir --update - fix problem mkhomedir ipa
 $ sudo cp /etc/skel/.bashrc ~ fix bashrc problem on home directory
 $ echo 		ALL            ALL = (ALL) NOPASSWD: ALL >> /etc/sudoers - set sudo without password for all
