@@ -406,7 +406,8 @@ $ grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg
 $ systemd-cgtop - The systemd-cgtop command can be used to see the resource usage
 $ 
 $ dmesg -T --level=err - check dmesg logs
-$ ssh-keygen -m PEM -t rsa -b 4096 -q -f /etc/heketi/heketi_key -N '' - create heketi key for rhel8
+$ ssh-keygen -m PEM -t rsa -b 4096 -q -f /etc/
+/heketi_key -N '' - create heketi key for rhel8
 $ find . -name '.htaccess' -exec sh -c 'echo "Require user admin" >> {}' \; - find file and add line to it
 $ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem - generate certificate
 $ find / -xdev -type f -size +100M - find big size files
@@ -420,6 +421,7 @@ $ heketi-cli volume info <volumeid> - show info about volume in cluster with id 
 $ heketi-cli volume create -size=100 - create volume with 100GB size
 $ heketi-cli volume expand -volume=<volumeid> -expand-size=1024 - expand size of volume
 $ heketi-cli volume delete <volumeid>
+$ heketi-cli device info de5d167ea132f6b842467d2e3bdfb5df
 $ systemctl enable firewalld - Enable firewall
 $ firewall-cmd --query-panic
 $ firewall-cmd --panic-on
