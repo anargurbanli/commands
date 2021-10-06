@@ -898,7 +898,7 @@ test_runner:
     - echo hi
 5. run runner
 $ gitlab-runner --debug verify - verify runners
-
+$ kubeadm alpha certs check-expiration | grep apiserver-etcd-client | awk '{print $7 }' | cut -b 1,2,3 - check kubernetes certificates expiring
 ---upgrade kubernetes services---
 $ kubeadm upgrade plan
 $ kubectl drain node01
