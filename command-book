@@ -1097,3 +1097,21 @@ backend loadbalancer
     server esds1.cbar.az 192.168.232.96:443 check cookie s1 ssl ca-file /etc/haproxy/ssl/cbar_ca-chain_04202021.cer
     server esds2.cbar.az 192.168.232.66:443 check cookie s2 ssl ca-file /etc/haproxy/ssl/cbar_ca-chain_04202021.cer
 ###acl backend #
+
+
+
+### gitlab script sh###
+cd /home/forgit/
+echo "I am here"
+git clone git@bitbucket.org:gts_dev/admin.e-cbar.az.git
+sleep 5
+cp -Rv admin.e-cbar.az/* ECBAR/admin.e-cbar.az/.
+cd ECBAR/admin.e-cbar.az/
+echo "I am in dir"
+git add .
+git commit -a -m "autoupdate `date +%F-%T`"
+sleep 3
+git push -u origin HEAD:test
+cd ..//..
+rm -Rf admin.e-cbar.az/
+####
