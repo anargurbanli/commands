@@ -493,6 +493,7 @@ $ setfacl -Rm u:magi:rwx /etc/apache2/sites-available/ - setfacl for user to dir
 $ systemctl status crond -l - list current status of crond
 $ journalctl -p err - show journalled error
 $ journalctl --since yesterday -p err - show journalled error logs from yesterday
+$ for file in /proc/*/status ; do awk '/VmSwap|Name/{printf $2 " " $3}END{ print ""}' $file; done | sort -k 2 -n -r | less - check swap usage by process
 $ hwclock --systohc - synchronizes current system time to hardware clock
 $ hwclock --hctosys - synchronize current hardware time to the system clock
 $ ln -sf /usr/share/zoneinfo/America/Los_Angeles /etc/localtime - set the local time as America/Los_Angeles
