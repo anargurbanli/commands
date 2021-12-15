@@ -422,6 +422,7 @@ $ heketi-cli volume create -size=100 - create volume with 100GB size
 $ heketi-cli volume expand -volume=<volumeid> -expand-size=1024 - expand size of volume
 $ heketi-cli volume delete <volumeid>
 $ heketi-cli device info de5d167ea132f6b842467d2e3bdfb5df
+$ heketi-cli device resync de5d167ea132f6b842467d2e3bdfb5df - extend device size
 $ systemctl enable firewalld - Enable firewall
 $ firewall-cmd --query-panic
 $ firewall-cmd --panic-on
