@@ -19,7 +19,7 @@ $DefaultNetstreamDriverKeyFile /etc/pki/tls/private/server-key.pem
 $ModLoad imtcp
 $InputTCPServerStreamDriverMode 1
 $InputTCPServerStreamDriverAuthMode x509/name
-$InputTCPServerStreamDriverPermittedPeer rsys-client.cbar.az
+$InputTCPServerStreamDriverPermittedPeer rsys-client.domain.az
 $InputTCPServerRun 6514
 
 #### GLOBAL DIRECTIVES ####
@@ -83,8 +83,8 @@ $DefaultNetstreamDriverCertFile /etc/pki/tls/certs/client-cert.pem
 $DefaultNetstreamDriverKeyFile /etc/pki/tls/private/client-key.pem
 $ActionSendStreamDriverMode 1 
 $ActionSendStreamDriverAuthMode x509/name
-$ActionSendStreamDriverPermittedPeer rsys-server.cbar.az
-*.* @@bksrelkvp.cbar.az:6514
+$ActionSendStreamDriverPermittedPeer rsys-server.domain.az
+*.* @@bksrelkvp.domain.az:6514
 ------------------------------------------------------------------
 $ mv client-cert.pem ca-cert.pem /etc/pki/tls/certs/
 $ mv client-key.pem ca-key.pem /etc/pki/tls/private/
@@ -141,19 +141,19 @@ $ getsebool -a | grep ftp
 $ semanage port -l | grep http
 $ semanage port -a -t http_port_t -p tcp 9876 - The -a option adds a new record; the -t option defines a type; and the -p option defines a protocol
 ---haproxy-key---
-openssl pkcs12 -in cbar.pfx -out cbar_nokey.pem -nokeys
-openssl pkcs12 -in cbar.pfx -out cbar_withkey.pem
-openssl rsa -in cbar_withkey.pem -out cbar.key
-cat cbar_nokey.pem cbar.key > my.pem
+openssl pkcs12 -in domain.pfx -out domain_nokey.pem -nokeys
+openssl pkcs12 -in domain.pfx -out domain_withkey.pem
+openssl rsa -in domain_withkey.pem -out domain.key
+cat domain_nokey.pem domain.key > my.pem
 ---subscription---
-$ subscription-manager register --org="Central_Bank_of_Azerbaijan_Republic" --activationkey="cbar_key"
+$ subscription-manager register --org="Central_Bank_of_Azerbaijan_Republic" --activationkey="domain_key"
 $ subscription-manager attach --auto
 $ subscription-manager unregister
 $ subscription-manager remove --all
 $ subscription-manager clean
 ---realmd---
 $ yum install sssd realmd oddjob oddjob-mkhomedir adcli samba-common samba-common-tools krb5-workstation openldap-clients policycoreutils-python -y
-$ realm join --user=anar_gurbanli cbar.az
+$ realm join --user=anar_gurbanli domain.az
 $ realm list
 $ sed -i 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
 $ sed -i 's/%u@%d/%u/g' /etc/sssd/sssd.conf
@@ -165,7 +165,7 @@ $ realm permit --all
 $ realm permit user@example.com
 $ realm permit -x user@example.com
 $ realm deny --all
-$ realm permit -g linux@cbar.az
+$ realm permit -g linux@domain.az
 $ realm leave example.com
 ---winbind---
 $ yum install samba-client  samba-winbind samba-winbind-clients
@@ -209,8 +209,8 @@ group:      files winbind
 $ getent passwd DOMAIN\aduser
 
 $ vim /etc/sudoersd/groupname
-% CBAR\\groupname        ALL=(ALL)       ALL
-CBAR\anar_gurbanli      ALL=(ALL)       ALL
+% domain\\groupname        ALL=(ALL)       ALL
+domain\anar_gurbanli      ALL=(ALL)       ALL
 ---session---
 $ mkdir /var/log/.session && chmod -R 733 /var/log/.session
 add the following lines to /etc/profile
@@ -232,7 +232,7 @@ echo $expday > /etc/init.d/root-expire
 #fi
 done
 ---sms-gateway---
-wget -O - "http://api.msm.az/sendsms?user=cbarapi&password=GTs3MFwQ&gsm=994552522000&from=BSXM&text=salam"
+wget -O - "http://api.msm.az/sendsms?user=domainapi&password=GTs3MFwQ&gsm=994552522000&from=BSXM&text=salam"
 ---Record terminal sessions---
 if [ "x$SESSION_RECORD" = "x" ]
 then
@@ -278,7 +278,7 @@ $ oscap info scan-results.xml | grep "Result ID" - check result id
 $ oscap xccdf generate fix --fix-type ansible --result-id "" --output playbook-scan-result.yml scan-results.xml - generate ansible playbook based on results of scan
  /usr/share/scap-security-guide/ansible/ directory
 $ oscap-ssh joesec@machine1 22 xccdf eval --report remote_report.html --profile ospp /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
-$ oscap-ssh root@bksrcbardbvp2 53123 xccdf eval --report remote_report.html --profile xccdf_org.ssgproject.content_profile_pci-dss /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
+$ oscap-ssh root@bksrdomaindbvp2 53123 xccdf eval --report remote_report.html --profile xccdf_org.ssgproject.content_profile_pci-dss /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
 $ oscap xccdf eval --remediate --profile C2S --results results.xml --report report.html /usr/share/xml/scap/ssg/content/ssg-rhel7-xccdf.xml - scan cis for rhel7
 ---kubernetes-calico-change-pod-network-cidr---
 $ kubectl apply -f https://docs.projectcalico.org/manifests/calicoctl.yaml
@@ -368,9 +368,9 @@ metadata:
   resourceVersion: "9167651"
 EOF
 
-$ kubectl get no bksrk8svt1.cbar.az -o yaml > file.yaml; sed -i "s/'172.16.0.0/16'/'172.17.0.0/16'/g" file.yaml; kubectl delete no bksrk8svt1.cbar.az && kubectl create -f file.yaml
-$ kubectl get no bksrk8svt2.cbar.az -o yaml > file.yaml; sed -i "s~172.16.1.0/16~172.17.1.0/16~" file.yaml; kubectl delete no bksrk8svt2.cbar.az && kubectl create -f file.yaml
-$ kubectl get no bksrk8svt3.cbar.az -o yaml > file.yaml; sed -i "s~172.16.2.0/16~172.17.2.0/16~" file.yaml; kubectl delete no bksrk8svt3.cbar.az && kubectl create -f file.yaml    
+$ kubectl get no bksrk8svt1.domain.az -o yaml > file.yaml; sed -i "s/'172.16.0.0/16'/'172.17.0.0/16'/g" file.yaml; kubectl delete no bksrk8svt1.domain.az && kubectl create -f file.yaml
+$ kubectl get no bksrk8svt2.domain.az -o yaml > file.yaml; sed -i "s~172.16.1.0/16~172.17.1.0/16~" file.yaml; kubectl delete no bksrk8svt2.domain.az && kubectl create -f file.yaml
+$ kubectl get no bksrk8svt3.domain.az -o yaml > file.yaml; sed -i "s~172.16.2.0/16~172.17.2.0/16~" file.yaml; kubectl delete no bksrk8svt3.domain.az && kubectl create -f file.yaml    
 
 $ kubectl -n kube-system edit cm kubeadm-config
 podSubnet: 10.254.0.0/16
@@ -382,9 +382,9 @@ $ calicoctl get wep --all-namespaces
 	
 $ calicoctl delete pool default-ipv4-ippool
 ---katello---
-curl --insecure --output katello-ca-consumer-latest.noarch.rpm https://satellite.cbar.az/pub/katello-ca-consumer-latest.noarch.rpm
+curl --insecure --output katello-ca-consumer-latest.noarch.rpm https://satellite.domain.az/pub/katello-ca-consumer-latest.noarch.rpm
 yum localinstall katello-ca-consumer-latest.noarch.rpm 
-subscription-manager register --org="Central_Bank_of_Azerbaijan_Republic" --activationkey="cbar_key"
+subscription-manager register --org="Central_Bank_of_Azerbaijan_Republic" --activationkey="domain_key"
 subscription-manager attach --auto
 subscription-manager repos --enable=rhel-7-server-satellite-tools-6.7-rpms
 yum -y install katello-host-tools katello-host-tools-tracer katello-agent insights-client
@@ -711,11 +711,11 @@ $ tar -tvf archivename.tar - show files archived in tar file
 $ echo "redhat" | passwd --stdin gabriel - change password for user gabriel and set password redhat for it
 $ rsync -rvz -e ssh  --remove-source-files /M_SWIFT/ all_adm@192.168.36.2:/home/all_adm/swift
 ---openssl---
-$ openssl pkcs12 -in <filename.pfx> -nocerts -nodes | sed -ne '/-BEGIN PRIVATE KEY-/,/-END PRIVATE KEY-/p' > rtsx.cbar.az.key.pem - export private key from pfx file
-$ openssl pkcs12 -in <filename.pfx> -clcerts -nokeys | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > rtsx.cbar.az.pem - export certificate from pfx file
+$ openssl pkcs12 -in <filename.pfx> -nocerts -nodes | sed -ne '/-BEGIN PRIVATE KEY-/,/-END PRIVATE KEY-/p' > rtsx.domain.az.key.pem - export private key from pfx file
+$ openssl pkcs12 -in <filename.pfx> -clcerts -nokeys | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > rtsx.domain.az.pem - export certificate from pfx file
 $ openssl pkcs12 -in <filename.pfx> -cacerts -nokeys -chain | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ca.pem - export ca from pfx file
 $ openssl x509 -outform der -in your-cert.pem -out your-cert.crt - convert pem to crt
-$ openssl pkcs12 -in rtsx.cbar.az-live.pfx -out privatekey.pem -nodes - convert pfx to pem
+$ openssl pkcs12 -in rtsx.domain.az-live.pfx -out privatekey.pem -nodes - convert pfx to pem
 ---freeipa---
 $  ipa pwpolicy-show --user=username - show users password policy
 
@@ -843,7 +843,7 @@ $ kubectl get all --all-namespaces -o yaml > all-deploy-services.yaml
 $ kubectl api-resources - get resource information
 $ kubectl create secret docker-registry private-reg-cred --docker-username=dock_user --docker-password=dock_password --docker-server=myprivateregistry.com:5000 --docker-email=dock_user@myprivateregistry.com
 $ kubectl scale --replicas=0 deployment <deploymentname> - terminate pod
-$ get pod -n ecbar | grep Evicted | awk '{print $1}' | xargs kubectl delete pod -n ecbar - delete evicted pods 
+$ get pod -n edomain | grep Evicted | awk '{print $1}' | xargs kubectl delete pod -n edomain - delete evicted pods 
 $ ip netns add red - add new network namespace with name red
 $ ip netns add blue - add new network namespace with name blue
 $ ip netns - show network namespaces
@@ -858,8 +858,8 @@ $ ip -n red addr add 192.168.15.2 dev veth-blue - add ip address for virtual cab
 
 Master
 kubeadm token create
-export NODE=smsrdisworkvp08.cbar.az
-kubectl drain $NODE --delete-local-data --force smsrdisworkvp01.cbar.az --ignore-daemonsets
+export NODE=smsrdisworkvp08.domain.az
+kubectl drain $NODE --delete-local-data --force smsrdisworkvp01.domain.az --ignore-daemonsets
 
 Worker
 systemctl stop kubelet
@@ -874,8 +874,8 @@ systemctl start docker
 systemctl start kubelet
 
 Master
-kubectl uncordon smsrdisworkvp01.cbar.az
- export NODE=smsrdisworkvp01.cbar.az
+kubectl uncordon smsrdisworkvp01.domain.az
+ export NODE=smsrdisworkvp01.domain.az
 echo -n | openssl s_client -connect $NODE:10250 2>&1 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | openssl x509 -text -noout | grep Not
 ---backup-etcd---
 $ETCDCTL_API=3 etcdctl --cert=/etc/kubernetes/pki/etcd/server.crt --cacert=/etc/kubernetes/pki/etcd/ca.crt --key=/etc/kubernetes/pki/etcd/server.key snapshot save /opt/snapshot-pre-boot.db
@@ -1077,7 +1077,7 @@ listen stats 192.168.232.80:1936
 
 frontend http
     bind *:80
-    bind *:443 ssl crt /etc/haproxy/ssl/cbar_04202021.cer ca-file /etc/haproxy/ssl/cbar_ca-chain_04202021.cer
+    bind *:443 ssl crt /etc/haproxy/ssl/domain_04202021.cer ca-file /etc/haproxy/ssl/domain_ca-chain_04202021.cer
     http-request set-header X-SSL                       %[ssl_fc]
     http-request set-header X-SSL-Client-Verify         %[ssl_c_verify]
     http-request set-header X-SSL-Client-SHA1           %{+Q}[ssl_c_sha1]
@@ -1096,10 +1096,10 @@ frontend http
 backend loadbalancer
     balance roundrobin
     cookie SERVERID insert indirect nocache
-    $server esds1.cbar.az 192.168.232.96:443 check cookie s1 ssl ca-file /etc/haproxy/ssl/esds.cbar.az.chain.pem
-    $server esds2.cbar.az 192.168.232.66:443 check cookie s2 ssl ca-file /etc/haproxy/ssl/esds.cbar.az.chain.pem
-    server esds1.cbar.az 192.168.232.96:443 check cookie s1 ssl ca-file /etc/haproxy/ssl/cbar_ca-chain_04202021.cer
-    server esds2.cbar.az 192.168.232.66:443 check cookie s2 ssl ca-file /etc/haproxy/ssl/cbar_ca-chain_04202021.cer
+    $server esds1.domain.az 192.168.232.96:443 check cookie s1 ssl ca-file /etc/haproxy/ssl/esds.domain.az.chain.pem
+    $server esds2.domain.az 192.168.232.66:443 check cookie s2 ssl ca-file /etc/haproxy/ssl/esds.domain.az.chain.pem
+    server esds1.domain.az 192.168.232.96:443 check cookie s1 ssl ca-file /etc/haproxy/ssl/domain_ca-chain_04202021.cer
+    server esds2.domain.az 192.168.232.66:443 check cookie s2 ssl ca-file /etc/haproxy/ssl/domain_ca-chain_04202021.cer
 ###acl backend #
 
 
@@ -1107,15 +1107,15 @@ backend loadbalancer
 ### gitlab script sh###
 cd /home/forgit/
 echo "I am here"
-git clone git@bitbucket.org:gts_dev/admin.e-cbar.az.git
+git clone git@bitbucket.org:gts_dev/admin.e-domain.az.git
 sleep 5
-cp -Rv admin.e-cbar.az/* ECBAR/admin.e-cbar.az/.
-cd ECBAR/admin.e-cbar.az/
+cp -Rv admin.e-domain.az/* Edomain/admin.e-domain.az/.
+cd Edomain/admin.e-domain.az/
 echo "I am in dir"
 git add .
 git commit -a -m "autoupdate `date +%F-%T`"
 sleep 3
 git push -u origin HEAD:test
 cd ..//..
-rm -Rf admin.e-cbar.az/
+rm -Rf admin.e-domain.az/
 ####
