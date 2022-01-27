@@ -410,6 +410,7 @@ $ ssh-keygen -m PEM -t rsa -b 4096 -q -f /etc/
 /heketi_key -N '' - create heketi key for rhel8
 $ find . -name '.htaccess' -exec sh -c 'echo "Require user admin" >> {}' \; - find file and add line to it
 $ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem - generate certificate
+$ openssl pkcs12 -export -out bankmarket_2022.pfx -inkey bankmarket_2022_key.pem -in bankmarket_2022_cert.pem -certfile bankmarket_2022_fullchain.pem
 $ find / -xdev -type f -size +100M - find big size files
 $ firewall-cmd --add-rich-rule='rule protocol value="vrrp" accept' --permanent - add keeapalived protocol to firewalld
 $ heketi-cli cluster list - show heketi cluster list
