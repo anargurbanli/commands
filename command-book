@@ -468,8 +468,8 @@ $ firewall-cmd --reload - Firewall reload
 $ firewall-cmd --add-forward-port=port=8080:proto=tcp:toport=80 - Port forward all incoming 8080 to 80
 $ firewall-cmd --add-forward-port=port=8080:proto=tcp:toport=80:toaddr=192.168.100.221 - Port forward to specific ip
 $ firewall-cmd --remove-forward-port=port=8080:proto=tcp:toport=80 - Port forwarding remove-port
-$ firelwall-cmd -add-rich-rule='rule vlan6="ipv4" source address="192.168.100.6" accept' - Allow all trafic from ip address
-$ firelwall-cmd -add-rich-rule='rule vlan6="ipv4" source address="192.168.122.102" drop' - Drop all trafic from ip address
+$ firewall-cmd --permanent --zone=public --add-rich-rule='rule family=ipv4 source address=192.168.128.220/32 accept' - Allow all trafic from ip address
+$ firewall-cmd --permanent --zone=public --add-rich-rule='rule family=ipv4 source address=192.168.128.220/32 reject' - Drop all trafic from ip address
 $ firewall-cmd --permanent --zone=public --add-source=192.168.100.0/24 - Allow subnet access
 $ firewall-cmd --permanent --zone=public --add-rich-rule='rule family=ipv4 source address=10.0.0.100/32 reject' - rich rule for rejecting incoming requests from specific ip address
 $ firewall-cmd --permanent --zone=public --add-forward-port=port=8888 proto=tcp:toport=80:toaddr=10.0.0.10 - forward incoming requests to port 8888 to port 80 on address 10.0.0.10
