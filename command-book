@@ -1,3 +1,10 @@
+---pvc volume expand(heketi)---
+1 kubectl -n ecbar get pvc - pvc sayi oyrenilir
+2 kubectl -n ecbar describe pv <pvc-name> - pv melumatlarindan volume adi goturulur
+3 heketi-cli volume list - volume adi teyin edilir ve volume id deqiqlesdirilir
+4 heketi-cli volume expand --expand-size=2 --volume=beaa53cbc5b88b15b509153b0b6afedb --> volume-un hecmi +2gb artirilir
+5 heketi-cli device resync beaa53cbc5b88b15b509153b0b6afedb --> volume size resync edilir
+-------------------------------------------------------------------------------------------------------------
 ---iperf check network bandwith---
 $ yum install iperf3
 $ iperf3 -i 5 -s  - on server listen as server in 5 second periods
