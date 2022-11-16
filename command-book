@@ -658,6 +658,7 @@ $ bg - move running shell job from foreground to background
 $ jobs - show which jobs are currently running from this shell
 $ arch - show operation sistem achitecture x64 or x86
 $ virsh console wm1 - connect to virtual machine with name wm1
+$ 
 $ vgreduce --removemissing --force vg_srvlinux - remove missing physical volume group
 $ scp -P 3308 /home/samba/.ssh/id_rsa.pub samba@192.168.100.70:/home/samba/.ssh/authorized_keys - ssh autorized from aix to linux
 $ usermod -a -G mygruop myuser - add user to groupe
@@ -677,7 +678,7 @@ $ swapoff -v /dev/vgroot/lvswap
 $ lvresize /dev/vgroot/lvswap -L 16G
 $ mkswap /dev/vgroot/lvswap
 $ swapon -va
-
+$ kubectl get pods | grep Evicted | awk '{print $1}' | xargs kubectl delete pod - delete all pods in Evicted mode
 $ fdisk -l - shows device
 $ echo "- - -" > /sys/class/scsi_host/host$/scan - scan and identifiy new added disck
 $ swapon -s - show swap space
