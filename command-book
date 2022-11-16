@@ -512,6 +512,8 @@ $ tzselect - tool for set time zone
 $ crontab -e -u natasha - set crontab for specific user
 $ /etc/locale.conf - set system language config file
 $ bashrc - start every time when user start session
+$ chattr +i /etc/resolv.conf - prevent change /etc/resolv.conf
+$ chattr +i /etc/resolv.conf - permit change /etc/resolv.conf
 $ bash_profile - start when new login created
 $ openvt -c 4 cmd - open new virtual terminal with number 4
 $ ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa-key.pub - check fingerprint of ssh-key
