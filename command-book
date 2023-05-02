@@ -1,3 +1,4 @@
+
 ---pvc volume expand(heketi)---
 1 kubectl -n ecbar get pvc - pvc sayi oyrenilir
 2 kubectl -n ecbar describe pv <pvc-name> - pv melumatlarindan volume adi goturulur
@@ -153,6 +154,15 @@ openssl pkcs12 -in domain.pfx -out domain_withkey.pem
 openssl rsa -in domain_withkey.pem -out domain.key
 cat domain_nokey.pem domain.key > my.pem
 ---subscription---
+subscription-manager clean
+subscription-manager unregister
+subscription-manager remove --all
+subscription-manager clean
+yum remove katello-ca-consumer-satellite.cbar.az-1.0-*.noarch -y
+curl --insecure --output katello-ca-consumer-latest.noarch.rpm https://satellitenew.cbar.az/pub/katello-ca-consumer-latest.noarch.rpm
+yum localinstall katello-ca-consumer-latest.noarch.rpm -y
+subscription-manager register --org="CBAR" --activationkey="cbar"
+$ subscription-manager register --org="CBAR" --activationkey="cbar"
 $ subscription-manager register --org="Central_Bank_of_Azerbaijan_Republic" --activationkey="domain_key"
 $ subscription-manager attach --auto
 $ subscription-manager unregister
