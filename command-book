@@ -1,4 +1,22 @@
-
+-------------------------------------------------------------------------------------------------------------
+---Clear ip from Loadbalancer---
+1. Chech ip in http blacklist 
+echo "show table http" | sudo socat stdio /var/run/haproxy.sock | grep gpt0=1
+2. Clear ip from http blacklist
+echo "clear table http" | sudo socat stdio /var/run/haproxy.sock
+1. Chech ip in k8s blacklist
+echo "show table k8s" | sudo socat stdio /var/run/haproxy.sock | grep gpt0=1
+2. Clear ip from http blacklist
+echo "clear table k8s" | sudo socat stdio /var/run/haproxy.sock
+-------------------------------------------------------------------------------------------------------------
+---Remove url from rate limit---
+1. Login to Gitlab: 
+2. Navigate to Ansible Project
+3. Repository>roles>lb>files>lists>err_rate_limit_http.acl
+4. add "#" to url want you to remove from rate limit
+5. Navigate to Pipelines
+6. RUN Pipeline (Add Variable: PLAYBOOKS lb)
+-------------------------------------------------------------------------------------------------------------
 ---pvc volume expand(heketi)---
 1 kubectl -n ecbar get pvc - pvc sayi oyrenilir
 2 kubectl -n ecbar describe pv <pvc-name> - pv melumatlarindan volume adi goturulur
