@@ -1,4 +1,21 @@
 -------------------------------------------------------------------------------------------------------------
+---Troubleshoot: Kubernetes Master node containers not started---
+1. Login to master nodes (all)
+2. Stop kubelet service
+systemctl stop kubelet
+3. Find kubelet processes and kill them
+ps aux | grep shim
+sudo kill -9 <pid of your process>
+4. Check running containers and remove them
+ctr -n k8s.io containers ls
+for i in $(ctr -n k8s.io containers ls | awk 'NR>1 {print $1}'); do ctr -n k8s.io container delete $i; done
+5. Clear containerd service
+cd /var/lib/containerd/
+rm- rf *
+6. Restart kubelet
+systemctl start kubelet
+Notice: If this not helps, chech filesystem of kubernetes nodes, there may be trouble with storage and containers cannot write logs
+-------------------------------------------------------------------------------------------------------------
 ---Clear ip from Loadbalancer---
 1. Chech ip in http blacklist 
 echo "show table http" | sudo socat stdio /var/run/haproxy.sock | grep gpt0=1
